@@ -135,8 +135,75 @@ uint8_t checkCondition(uint8_t cond, uint32_t* registers) {
     return 0;
 }
 
-void executeDP(decodedInstruction decoded) {
+uint32_t rightRotate(uint32_t n, unsigned int d)
+{
+   return (n >> d)|(n << (32 - d));
+}
 
+uint32_t pow(uint32_t x,int n)
+{
+    int i; /* Variable used in loop counter */
+    uint32_t number = 1;
+
+    for (i = 0; i < n; ++i)
+        number *= x;
+
+    return(number);
+}
+
+void executeDP(decodedInstruction decoded, uint32_t* registers) {
+    if (!checkCondition(decoded.cond, registers)) {
+        return;
+    }
+
+    uint32_t op2 = 0;
+    if (decoded.i == 1) {
+        uint8_t imm = ((uint8_t*)&(decoded.operand2))[0];
+        uint32_t immExtend = imm;
+        uint8_t rotate = ((uint8_t*)&(decoded.operand2))[1];
+        rotate *= 2;
+        op2 = rightRotate(immExtend, rotate);
+    }
+    else {
+        // To extract the last 4 bits
+        uint16_t mask = 15;
+        uint8_t rm = decoded.operand2 & mask;
+        uint32_t rmExtend = rm;
+        // To extract the 5-bit shift value
+        mask = 3968;
+        uint8_t shiftVal = decoded.operand2 & mask;
+        // To extract the 2 bit shift type
+        mask = 96;
+        uint8_t shiftType = decoded.operand2 & mask;
+        uint8_t carry = 0;
+        //Logical left lsl
+        if (shiftType == 0) {
+            carry = CHECK_BIT(rmExtend, 32 - shiftVal);
+            op2 = rmExtend << shiftVal;
+        }
+        // Logical right lsr
+        else if (shiftType == 1) {
+            carry = CHECK_BIT(rmExtend, shiftVal - 1);
+            op2 = rmExtend >> shiftVal;
+        }
+        // Arithmetic right
+        else if (shiftType == 2) {
+            carry = CHECK_BIT(rmExtend, shiftVal - 1);
+            rmExtend = rmExtend >> shiftVal;
+            if (CHECK_BIT(rmExtend, 31) == 1) {
+                mask = pow(2, 32 - shiftVal) * (pow(2, shiftVal) - 1);
+                op2 = rmExtend | mask;
+            }
+            else {
+                op2 = rmExtend;
+            }
+        }
+        // Right rotate
+        else if (shiftType == 3) {
+            carry = CHECK_BIT(rmExtend, shiftVal - 1);
+            op2 = rightRotate(rmExtend, shiftVal);
+        }
+    }
 }
 
 int main(int argc, char **argv) {
