@@ -5,6 +5,7 @@
 
 #define CHECK_BIT(val, bit_no) (((val) >> (bit_no)) & 1)
 
+/*
 void printBits(uint32_t x) {
     int i;
     uint32_t mask = 1 << 31;
@@ -19,9 +20,9 @@ void printBits(uint32_t x) {
         x = x << 1;
     }
     printf("\n");
-}
+}*/
 
-void loadFile(char* memory, const char* fileName) {
+void loadFile(uint8_t* memory, const char* fileName) {
     FILE* binaryFile = fopen(fileName, "rb");
     if (binaryFile == NULL) {
         perror("Error opening the binary file!");
@@ -65,39 +66,83 @@ uint32_t extractBits(uint32_t number, int k, int p)
 
 // Represents a data processing instruction
 typedef struct {
-    char cond;
-    char i;
-    char opcode;
-    char s;
-    char rn;
-    char rd;
+    instructionType type;
+    uint8_t cond;
+    uint8_t i;
+    uint8_t opcode;
+    uint8_t s;
+    uint8_t rn;
+    uint8_t rd;
     uint16_t operand2;
-} i_dp;
+    uint8_t a;
+    uint8_t rs;
+    uint8_t rm;
+    uint8_t p;
+    uint8_t u;
+    uint8_t l;
+    uint32_t offset;
+} decodedInstruction;
 
 // Decodes data processing instructions
-i_dp decodeDP(uint32_t instruction) {
-    i_dp decoded;
+decodedInstruction decodeDP(uint32_t instruction) {
+    decodedInstruction decoded;
+    decoded.type = DATA_PROCESSING;
     uint32_t result = extractBits(instruction, 4, 29);
-    decoded.cond = ((char*)(&result))[0];
+    decoded.cond = ((uint8_t*)(&result))[0];
     result = extractBits(instruction, 1, 26);
-    decoded.i = ((char*)(&result))[0];
+    decoded.i = ((uint8_t*)(&result))[0];
     result = extractBits(instruction, 4, 22);
-    decoded.opcode = ((char*)(&result))[0];
+    decoded.opcode = ((uint8_t*)(&result))[0];
     result = extractBits(instruction, 1, 21);
-    decoded.s = ((char*)(&result))[0];
+    decoded.s = ((uint8_t*)(&result))[0];
     result = extractBits(instruction, 4, 17);
-    decoded.rn = ((char*)(&result))[0];
+    decoded.rn = ((uint8_t*)(&result))[0];
     result = extractBits(instruction, 4, 13);
-    decoded.rd = ((char*)(&result))[0];
+    decoded.rd = ((uint8_t*)(&result))[0];
     result = extractBits(instruction, 12, 1);
     decoded.operand2 = ((uint16_t*)(&result))[0];
     return decoded;
 }
 
+uint8_t checkCondition(uint8_t cond, uint32_t* registers) {
+    if (cond == 14) {
+        return 1;
+    }
+    else if (cond == 0) {
+        return CHECK_BIT(registers[16], 30);
+    }
+    else if (cond == 1) {
+        return !CHECK_BIT(registers[16], 30);
+    }
+    else if (cond == 10) {
+        return (CHECK_BIT(registers[16], 31) && CHECK_BIT(registers[16], 28))
+                            || (!CHECK_BIT(registers[16], 31) && !CHECK_BIT(registers[16], 28));
+    }
+    else if (cond == 11) {
+        return (CHECK_BIT(registers[16], 31) && !CHECK_BIT(registers[16], 28))
+                            || (!CHECK_BIT(registers[16], 31) && CHECK_BIT(registers[16], 28));
+
+    }
+    else if (cond == 12) {
+        return !CHECK_BIT(registers[16], 30) && ((CHECK_BIT(registers[16], 31) && CHECK_BIT(registers[16], 28))
+                            || (!CHECK_BIT(registers[16], 31) && !CHECK_BIT(registers[16], 28)));
+    }
+    else if (cond == 13) {
+        return CHECK_BIT(registers[16], 30) || ((CHECK_BIT(registers[16], 31) && !CHECK_BIT(registers[16], 28))
+                            || (!CHECK_BIT(registers[16], 31) && CHECK_BIT(registers[16], 28)));
+    }
+    // should be unreachable
+    return 0;
+}
+
+void executeDP(decodedInstruction decoded) {
+
+}
+
 int main(int argc, char **argv) {
 
     // The main memory of the Raspberry Pi
-    char* mainMemory = malloc(65536);
+    uint8_t* mainMemory = malloc(65536);
     memset(mainMemory, 0, 65536);
 
     // Reading the binary code into main memory
@@ -138,7 +183,7 @@ int main(int argc, char **argv) {
     }*/
 
     uint32_t instruction = ((uint32_t*)(mainMemory))[1];
-    i_dp jesus = decodeDP(instruction);
+    decodedInstruction jesus = decodeDP(instruction);
     printf("%u", jesus.operand2);
 
 
