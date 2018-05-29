@@ -39,7 +39,7 @@ void loadFile(char* memory, const char* fileName) {
 
 typedef enum { DATA_PROCESSING, MULTIPLY, DATA_TRANSFER, BRANCH } instructionType;
 
-instructionType getInstructionType(int32_t instruction) {
+instructionType getInstructionType(uint32_t instruction) {
     if (CHECK_BIT(instruction, 27) && !CHECK_BIT(instruction, 26) && CHECK_BIT(instruction, 25) && !CHECK_BIT(instruction, 24)) {
         return BRANCH;
     }
@@ -56,6 +56,44 @@ instructionType getInstructionType(int32_t instruction) {
     }
 }
 
+// k is number of bits to extract, p is the starting position (starts from 1, which is the right most/least significant bit)
+uint32_t extractBits(uint32_t number, int k, int p)
+{
+    return (((1 << k) - 1) & (number >> (p - 1)));
+}
+
+
+// Represents a data processing instruction
+typedef struct {
+    char cond;
+    char i;
+    char opcode;
+    char s;
+    char rn;
+    char rd;
+    uint16_t operand2;
+} i_dp;
+
+// Decodes data processing instructions
+i_dp decodeDP(uint32_t instruction) {
+    i_dp decoded;
+    uint32_t result = extractBits(instruction, 4, 29);
+    decoded.cond = ((char*)(&result))[0];
+    result = extractBits(instruction, 1, 26);
+    decoded.i = ((char*)(&result))[0];
+    result = extractBits(instruction, 4, 22);
+    decoded.opcode = ((char*)(&result))[0];
+    result = extractBits(instruction, 1, 21);
+    decoded.s = ((char*)(&result))[0];
+    result = extractBits(instruction, 4, 17);
+    decoded.rn = ((char*)(&result))[0];
+    result = extractBits(instruction, 4, 13);
+    decoded.rd = ((char*)(&result))[0];
+    result = extractBits(instruction, 12, 1);
+    decoded.operand2 = ((uint16_t*)(&result))[0];
+    return decoded;
+}
+
 int main(int argc, char **argv) {
 
     // The main memory of the Raspberry Pi
@@ -66,11 +104,11 @@ int main(int argc, char **argv) {
     loadFile(mainMemory, argv[1]);
 
     // Creates the registers
-    int32_t* registers = malloc(17 * sizeof(int32_t));
-    memset(registers, 0, 17 * sizeof(int32_t));
+    uint32_t* registers = malloc(17 * sizeof(uint32_t));
+    memset(registers, 0, 17 * sizeof(uint32_t));
 
-    int32_t decoded;
-    int32_t fetched;
+    uint32_t decoded;
+    uint32_t fetched;
 
     /*fetched = mainMemory[registers[15]];
     registers[15] += 4;
@@ -81,11 +119,27 @@ int main(int argc, char **argv) {
 
     }*/
 
-    /*int32_t* ptr = (int32_t*)mainMemory;
+    /*uint32_t* ptr = (uint32_t*)mainMemory;
     for (int i = 0; i < 10; i++) {
         printf("%d", getInstructionType(ptr[i]));
         printf(" ");
     }*/
+
+
+    /*uint32_t result = extractBits(4194303999, 12, 21);
+    printf("%d", result);
+    uint16_t bits = ((uint16_t*)(&result))[0];
+    printf("%d", bits);*/
+
+    /*for (int i = 0; i < 8; i++) {
+        uint8_t j = mainMemory[i];
+        printf("%u", j);
+        printf(" ");
+    }*/
+
+    uint32_t instruction = ((uint32_t*)(mainMemory))[1];
+    i_dp jesus = decodeDP(instruction);
+    printf("%u", jesus.operand2);
 
 
     free(mainMemory);
