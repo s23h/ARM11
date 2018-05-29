@@ -1,0 +1,3 @@
+/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/CMakeFiles/arm11_34.dir
