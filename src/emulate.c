@@ -272,9 +272,7 @@ void executeDP(decodedInstruction decoded, uint32_t* registers) {
 
         // Set the N bit
         setBit32(&(registers[16]), 31, CHECK_BIT(result, 31));
-
     }
-
 }
 
 int main(int argc, char **argv) {
@@ -290,15 +288,37 @@ int main(int argc, char **argv) {
     uint32_t* registers = malloc(17 * sizeof(uint32_t));
     memset(registers, 0, 17 * sizeof(uint32_t));
 
-    uint32_t fetched = ((uint32_t*)(mainMemory))[0];
-    decodedInstruction decoded = decodeDP(fetched);
-    executeDP(decoded, registers);
-    fetched = ((uint32_t*)(mainMemory))[1];
-    decoded = decodeDP(fetched);
-    executeDP(decoded, registers);
-    fetched = ((uint32_t*)(mainMemory))[2];
-    decoded = decodeDP(fetched);
-    executeDP(decoded, registers);
+    decodedInstruction decoded;
+    uint32_t fetched;
+
+    int decodeAvailable = 0;
+    int executeAvailable = 0;
+    int halt = 0;
+
+    while (1) {
+        if (executeAvailable) {
+            if (halt) {
+                break;
+            }
+            else {
+                executeDP(decoded, registers);
+            }
+        }
+        if (decodeAvailable) {
+            if (fetched == 0) {
+                halt = 1;
+            }
+            else {
+                decoded = decodeDP(fetched);
+            }
+        }
+        fetched = ((uint32_t*)(&mainMemory[registers[15]]))[0];
+        registers[15] += 4;
+        if (decodeAvailable) {
+            executeAvailable = 1;
+        }
+        decodeAvailable = 1;
+    }
 
     printf("Registers:\n");
     for (int i = 0; i < 13; i++) {
