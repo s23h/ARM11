@@ -253,8 +253,126 @@ int main(int argc, char **argv) {
     decodedInstruction jesus = decodeDP(instruction);
     printf("%u", jesus.operand2);
 
+//---------------------------------------------------------------------------
+
+decodedInstruction decodeDT(uint32_t instruction) {
+    decodedInstruction decoded;
+    decoded.type = DATA_TRANSFER;
+
+    uint32_t result = extractBits(instruction, 4, 29);
+    decoded.cond = ((uint8_t*)(&result))[0];
+
+    result = extractBits(instruction, 1, 26);
+    decoded.i = ((uint8_t*)(&result))[0];
+
+    result = extractBits(instruction, 1, 25);
+    decoded.p = ((uint8_t*)(&result))[0];
+
+    result = extractBits(instruction, 1, 24);
+    decoded.u = ((uint8_t*)(&result))[0];
+
+    result = extractBits(instruction, 1, 21);
+    decoded.l = ((uint8_t*)(&result))[0];
+
+    result = extractBits(instruction, 4, 17);
+    decoded.rn = ((uint8_t*)(&result))[0];
+
+    result = extractBits(instruction, 4, 13);
+    decoded.rd = ((uint8_t*)(&result))[0];
+
+    result = extractBits(instruction, 12, 1);
+    decoded.operand2 = ((uint16_t*)(&result))[0];
+    return decoded;
+}
+
+void executeDT(decodedInstruction decoded, uint32_t* registers) {
+    if (!checkCondition(decoded.cond, registers)) {
+        return;
+    }
+
+    uint16_t offset;
+    if(decoded.cond==0){
+      offset = decoded.operand2;
+    } else {
+      // To extract the last 4 bits
+      uint16_t mask = 15;
+      uint8_t rm = decoded.operand2 & mask;
+      uint32_t rmExtend = rm;
+      // To extract the 5-bit shift value
+      mask = 3968;
+      uint8_t shiftVal = decoded.operand2 & mask;
+      // To extract the 2 bit shift type
+      mask = 96;
+      uint8_t shiftType = decoded.operand2 & mask;
+      uint8_t carry = 0;
+      //Logical left lsl
+      if (shiftType == 0) {
+          carry = CHECK_BIT(rmExtend, 32 - shiftVal);
+          offset = rmExtend << shiftVal;
+      }
+      // Logical right lsr
+      else if (shiftType == 1) {
+          carry = CHECK_BIT(rmExtend, shiftVal - 1);
+          offset = rmExtend >> shiftVal;
+      }
+      // Arithmetic right
+      else if (shiftType == 2) {
+          carry = CHECK_BIT(rmExtend, shiftVal - 1);
+          rmExtend = rmExtend >> shiftVal;
+          if (CHECK_BIT(rmExtend, 31) == 1) {
+              mask = pow(2, 32 - shiftVal) * (pow(2, shiftVal) - 1);
+              offset = rmExtend | mask;
+          }
+          else {
+              offset = rmExtend;
+          }
+      }
+      // Right rotate
+      else if (shiftType == 3) {
+          carry = CHECK_BIT(rmExtend, shiftVal - 1);
+          offset = rightRotate(rmExtend, shiftVal);
+      }
+
+    }
+
+
+    if (decoded.p == 1 && decoded.u == 1 && decoded.l == 1) {
+      registers[rd] = memory[registers[decoded.rn + offset]];
+    } else if (decoded.p == 1 && decoded.u == 0 && decoded.l == 1) {
+      registers[rd] = memory[registers[decoded.rn - offset]];
+    } else if (decoded.p == 1 && decoded.u == 1 && decoded.l == 0) {
+      memory[registers[rd]] = memory[registers[decoded.rn + offset]];
+    } else if (decoded.p == 1 && decoded.u == 0 && decoded.l == 0) {
+      memory[registers[rd]] = memory[registers[decoded.rn - offset]];
+    } else if (decoded.p == 0 && decoded.u == 1 && decoded.l == 1) {
+      registers[rd] = memory[registers[decoded.rn] + offset]];
+    } else if (decoded.p == 0 && decoded.u == 0 && decoded.l == 1) {
+      registers[rd] = memory[registers[decoded.rn] - offset]];
+    } else if (decoded.p == 0 && decoded.u == 1 && decoded.l == 0) {
+      memory[registers[rd]] = memory[registers[decoded.rn] + offset]];
+    } else if (decoded.p == 0 && decoded.u == 0 && decoded.l == 0) {
+      memory[registers[rd]] = memory[registers[decoded.rn] - offset]];
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
 
     free(mainMemory);
     free(registers);
     return 0;
+
 }
