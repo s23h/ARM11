@@ -64,6 +64,7 @@ typedef struct {
     uint8_t p;
     uint8_t u;
     uint8_t l;
+    uint8_t rest;
     uint32_t offset;
 } decodedInstruction;
 
@@ -145,6 +146,47 @@ void setBit32(uint32_t* word, int pos, int val) {
         uint32_t mask = myPow(2, pos);
         *word = *word | mask;
     }
+}
+
+decodedInstruction decodeDP2(uint32_t instruction) {
+    decodedInstruction decoded;
+    decoded.type = DATA_PROCESSING;
+    uint32_t result = extractBits(instruction, 4, 29);
+    decoded.cond = ((uint8_t*)(&result))[0];
+    result = extractBits(instruction, 8, 25);
+    decoded.rest = ((uint8_t*)(&result))[0];
+
+    return decoded;
+}
+
+void setBit8(uint8_t* rest, int pos, int val) {
+    if (val == 0) {
+        uint8_t mask = ~myPow(2, pos);
+        *rest = *rest & mask;
+    }
+    else if (val == 1) {
+        uint8_t mask = myPow(2, pos);
+        *rest = *rest | mask;
+    }
+}
+
+void branchCondition(decodedInstruction decoded, u_int32_t* registers) {
+
+    if(!checkCondition(decoded.cond, registers)) {
+        return;
+    } else{
+
+
+        for (int i = 0; i < 8; i++ ) {
+            setBit8(decoded.rest, i, 1);
+        }
+        decoded.offset = decoded.offset << 2;
+
+        registers[15] = decoded.offset;
+
+    }
+
+
 }
 
 void executeDP(decodedInstruction decoded, uint32_t* registers) {
@@ -273,112 +315,9 @@ void executeDP(decodedInstruction decoded, uint32_t* registers) {
         // Set the N bit
         setBit32(&(registers[16]), 31, CHECK_BIT(result, 31));
     }
-<<<<<<< HEAD
 }
 
 
-decodedInstruction decodeDT(uint32_t instruction) {
-    decodedInstruction decoded;
-    decoded.type = DATA_TRANSFER;
-
-    uint32_t result = extractBits(instruction, 4, 29);
-    decoded.cond = ((uint8_t*)(&result))[0];
-
-    result = extractBits(instruction, 1, 26);
-    decoded.i = ((uint8_t*)(&result))[0];
-
-    result = extractBits(instruction, 1, 25);
-    decoded.p = ((uint8_t*)(&result))[0];
-
-    result = extractBits(instruction, 1, 24);
-    decoded.u = ((uint8_t*)(&result))[0];
-
-    result = extractBits(instruction, 1, 21);
-    decoded.l = ((uint8_t*)(&result))[0];
-
-    result = extractBits(instruction, 4, 17);
-    decoded.rn = ((uint8_t*)(&result))[0];
-
-    result = extractBits(instruction, 4, 13);
-    decoded.rd = ((uint8_t*)(&result))[0];
-
-    result = extractBits(instruction, 12, 1);
-    decoded.operand2 = ((uint16_t*)(&result))[0];
-    return decoded;
-=======
->>>>>>> 77769c3b9ce5bf2517d5d4229aefe08bb9faa0ba
-}
-
-void executeDT(decodedInstruction decoded, uint32_t* registers) {
-    if (!checkCondition(decoded.cond, registers)) {
-        return;
-    }
-
-    uint16_t offset;
-    if(decoded.cond==0){
-      offset = decoded.operand2;
-    } else {
-      // To extract the last 4 bits
-      uint16_t mask = 15;
-      uint8_t rm = decoded.operand2 & mask;
-      uint32_t rmExtend = rm;
-      // To extract the 5-bit shift value
-      mask = 3968;
-      uint8_t shiftVal = decoded.operand2 & mask;
-      // To extract the 2 bit shift type
-      mask = 96;
-      uint8_t shiftType = decoded.operand2 & mask;
-      uint8_t carry = 0;
-      //Logical left lsl
-      if (shiftType == 0) {
-          carry = CHECK_BIT(rmExtend, 32 - shiftVal);
-          offset = rmExtend << shiftVal;
-      }
-      // Logical right lsr
-      else if (shiftType == 1) {
-          carry = CHECK_BIT(rmExtend, shiftVal - 1);
-          offset = rmExtend >> shiftVal;
-      }
-      // Arithmetic right
-      else if (shiftType == 2) {
-          carry = CHECK_BIT(rmExtend, shiftVal - 1);
-          rmExtend = rmExtend >> shiftVal;
-          if (CHECK_BIT(rmExtend, 31) == 1) {
-              mask = pow(2, 32 - shiftVal) * (pow(2, shiftVal) - 1);
-              offset = rmExtend | mask;
-          }
-          else {
-              offset = rmExtend;
-          }
-      }
-      // Right rotate
-      else if (shiftType == 3) {
-          carry = CHECK_BIT(rmExtend, shiftVal - 1);
-          offset = rightRotate(rmExtend, shiftVal);
-      }
-
-    }
-
-
-    if (decoded.p == 1 && decoded.u == 1 && decoded.l == 1) {
-      registers[rd] = memory[registers[decoded.rn + offset]];
-    } else if (decoded.p == 1 && decoded.u == 0 && decoded.l == 1) {
-      registers[rd] = memory[registers[decoded.rn - offset]];
-    } else if (decoded.p == 1 && decoded.u == 1 && decoded.l == 0) {
-      memory[registers[rd]] = memory[registers[decoded.rn + offset]];
-    } else if (decoded.p == 1 && decoded.u == 0 && decoded.l == 0) {
-      memory[registers[rd]] = memory[registers[decoded.rn - offset]];
-    } else if (decoded.p == 0 && decoded.u == 1 && decoded.l == 1) {
-      registers[rd] = memory[registers[decoded.rn] + offset]];
-    } else if (decoded.p == 0 && decoded.u == 0 && decoded.l == 1) {
-      registers[rd] = memory[registers[decoded.rn] - offset]];
-    } else if (decoded.p == 0 && decoded.u == 1 && decoded.l == 0) {
-      memory[registers[rd]] = memory[registers[decoded.rn] + offset]];
-    } else if (decoded.p == 0 && decoded.u == 0 && decoded.l == 0) {
-      memory[registers[rd]] = memory[registers[decoded.rn] - offset]];
-    }
-
-  }
 
 int main(int argc, char **argv) {
 
@@ -393,13 +332,15 @@ int main(int argc, char **argv) {
     uint32_t* registers = malloc(17 * sizeof(uint32_t));
     memset(registers, 0, 17 * sizeof(uint32_t));
 
+
+
     decodedInstruction decoded;
+
     uint32_t fetched;
 
     int decodeAvailable = 0;
     int executeAvailable = 0;
     int halt = 0;
-<<<<<<< HEAD
 
     while (1) {
         if (executeAvailable) {
@@ -444,169 +385,13 @@ int main(int argc, char **argv) {
             }
         }
     }
-=======
-
-    while (1) {
-        if (executeAvailable) {
-            if (halt) {
-                break;
-            }
-            else {
-                executeDP(decoded, registers);
-            }
-        }
-        if (decodeAvailable) {
-            if (fetched == 0) {
-                halt = 1;
-            }
-            else {
-                decoded = decodeDP(fetched);
-            }
-        }
-        fetched = ((uint32_t*)(&mainMemory[registers[15]]))[0];
-        registers[15] += 4;
-        if (decodeAvailable) {
-            executeAvailable = 1;
-        }
-        decodeAvailable = 1;
-    }
-
-    printf("Registers:\n");
-    for (int i = 0; i < 13; i++) {
-        printf("%d : ", i);
-        printf("%u %X\n", registers[i], registers[i]);
-    }
-
-    printf("PC : %u %X\n", registers[15], registers[15]);
-    printf("CPSR : %u %X\n", registers[16], registers[16]);
-
-    printf("Non-zero memory locations: \n");
-
-    for (int i = 0; i < size; i++) {
-        if (i % 4 == 0) {
-            if (((uint32_t*)(mainMemory))[i / 4] != 0) {
-                printf("%d : %X\n", i, ((uint32_t*)(mainMemory))[i / 4]);
-            }
-        }
-    }
-
-//---------------------------------------------------------------------------
-
-decodedInstruction decodeDT(uint32_t instruction) {
-    decodedInstruction decoded;
-    decoded.type = DATA_TRANSFER;
-
-    uint32_t result = extractBits(instruction, 4, 29);
-    decoded.cond = ((uint8_t*)(&result))[0];
-
-    result = extractBits(instruction, 1, 26);
-    decoded.i = ((uint8_t*)(&result))[0];
-
-    result = extractBits(instruction, 1, 25);
-    decoded.p = ((uint8_t*)(&result))[0];
-
-    result = extractBits(instruction, 1, 24);
-    decoded.u = ((uint8_t*)(&result))[0];
-
-    result = extractBits(instruction, 1, 21);
-    decoded.l = ((uint8_t*)(&result))[0];
-
-    result = extractBits(instruction, 4, 17);
-    decoded.rn = ((uint8_t*)(&result))[0];
-
-    result = extractBits(instruction, 4, 13);
-    decoded.rd = ((uint8_t*)(&result))[0];
-
-    result = extractBits(instruction, 12, 1);
-    decoded.operand2 = ((uint16_t*)(&result))[0];
-    return decoded;
-}
-
-void executeDT(decodedInstruction decoded, uint32_t* registers) {
-    if (!checkCondition(decoded.cond, registers)) {
-        return;
-    }
-
-    uint16_t offset;
-    if(decoded.cond==0){
-      offset = decoded.operand2;
-    } else {
-      // To extract the last 4 bits
-      uint16_t mask = 15;
-      uint8_t rm = decoded.operand2 & mask;
-      uint32_t rmExtend = rm;
-      // To extract the 5-bit shift value
-      mask = 3968;
-      uint8_t shiftVal = decoded.operand2 & mask;
-      // To extract the 2 bit shift type
-      mask = 96;
-      uint8_t shiftType = decoded.operand2 & mask;
-      uint8_t carry = 0;
-      //Logical left lsl
-      if (shiftType == 0) {
-          carry = CHECK_BIT(rmExtend, 32 - shiftVal);
-          offset = rmExtend << shiftVal;
-      }
-      // Logical right lsr
-      else if (shiftType == 1) {
-          carry = CHECK_BIT(rmExtend, shiftVal - 1);
-          offset = rmExtend >> shiftVal;
-      }
-      // Arithmetic right
-      else if (shiftType == 2) {
-          carry = CHECK_BIT(rmExtend, shiftVal - 1);
-          rmExtend = rmExtend >> shiftVal;
-          if (CHECK_BIT(rmExtend, 31) == 1) {
-              mask = pow(2, 32 - shiftVal) * (pow(2, shiftVal) - 1);
-              offset = rmExtend | mask;
-          }
-          else {
-              offset = rmExtend;
-          }
-      }
-      // Right rotate
-      else if (shiftType == 3) {
-          carry = CHECK_BIT(rmExtend, shiftVal - 1);
-          offset = rightRotate(rmExtend, shiftVal);
-      }
-
-    }
-
-
-    if (decoded.p == 1 && decoded.u == 1 && decoded.l == 1) {
-      registers[rd] = memory[registers[decoded.rn + offset]];
-    } else if (decoded.p == 1 && decoded.u == 0 && decoded.l == 1) {
-      registers[rd] = memory[registers[decoded.rn - offset]];
-    } else if (decoded.p == 1 && decoded.u == 1 && decoded.l == 0) {
-      memory[registers[rd]] = memory[registers[decoded.rn + offset]];
-    } else if (decoded.p == 1 && decoded.u == 0 && decoded.l == 0) {
-      memory[registers[rd]] = memory[registers[decoded.rn - offset]];
-    } else if (decoded.p == 0 && decoded.u == 1 && decoded.l == 1) {
-      registers[rd] = memory[registers[decoded.rn] + offset]];
-    } else if (decoded.p == 0 && decoded.u == 0 && decoded.l == 1) {
-      registers[rd] = memory[registers[decoded.rn] - offset]];
-    } else if (decoded.p == 0 && decoded.u == 1 && decoded.l == 0) {
-      memory[registers[rd]] = memory[registers[decoded.rn] + offset]];
-    } else if (decoded.p == 0 && decoded.u == 0 && decoded.l == 0) {
-      memory[registers[rd]] = memory[registers[decoded.rn] - offset]];
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-  }
->>>>>>> 77769c3b9ce5bf2517d5d4229aefe08bb9faa0ba
 
     free(mainMemory);
     free(registers);
     return 0;
 
+
+
 }
+
+
