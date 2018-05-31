@@ -64,6 +64,7 @@ typedef struct {
     uint8_t p;
     uint8_t u;
     uint8_t l;
+    uint8_t rest;
     uint32_t offset;
 } decodedInstruction;
 
@@ -145,6 +146,47 @@ void setBit32(uint32_t* word, int pos, int val) {
         uint32_t mask = myPow(2, pos);
         *word = *word | mask;
     }
+}
+
+decodedInstruction decodeDP2(uint32_t instruction) {
+    decodedInstruction decoded;
+    decoded.type = DATA_PROCESSING;
+    uint32_t result = extractBits(instruction, 4, 29);
+    decoded.cond = ((uint8_t*)(&result))[0];
+    result = extractBits(instruction, 8, 25);
+    decoded.rest = ((uint8_t*)(&result))[0];
+
+    return decoded;
+}
+
+void setBit8(uint8_t* rest, int pos, int val) {
+    if (val == 0) {
+        uint8_t mask = ~myPow(2, pos);
+        *rest = *rest & mask;
+    }
+    else if (val == 1) {
+        uint8_t mask = myPow(2, pos);
+        *rest = *rest | mask;
+    }
+}
+
+void branchCondition(decodedInstruction decoded, u_int32_t* registers) {
+
+    if(!checkCondition(decoded.cond, registers)) {
+        return;
+    } else{
+
+
+        for (int i = 0; i < 8; i++ ) {
+            setBit8(decoded.rest, i, 1);
+        }
+        decoded.offset = decoded.offset << 2;
+
+        registers[15] = decoded.offset;
+
+    }
+
+
 }
 
 void executeDP(decodedInstruction decoded, uint32_t* registers) {
@@ -276,6 +318,7 @@ void executeDP(decodedInstruction decoded, uint32_t* registers) {
 }
 
 
+<<<<<<< HEAD
 decodedInstruction decodeDT(uint32_t instruction) {
     decodedInstruction decoded;
     decoded.type = DATA_TRANSFER;
@@ -380,6 +423,8 @@ void executeDT(decodedInstruction decoded, uint32_t* registers) {
     }
 
   }
+=======
+>>>>>>> c6bd655578344967f3998bcfab5d80dd0ab8ee03
 
 int main(int argc, char **argv) {
 
@@ -394,7 +439,10 @@ int main(int argc, char **argv) {
     uint32_t* registers = malloc(17 * sizeof(uint32_t));
     memset(registers, 0, 17 * sizeof(uint32_t));
 
+
+
     decodedInstruction decoded;
+
     uint32_t fetched;
 
     int decodeAvailable = 0;
@@ -449,4 +497,12 @@ int main(int argc, char **argv) {
     free(registers);
     return 0;
 
+<<<<<<< HEAD
 }
+=======
+
+
+}
+
+
+>>>>>>> c6bd655578344967f3998bcfab5d80dd0ab8ee03
