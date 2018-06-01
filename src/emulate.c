@@ -318,7 +318,7 @@ void executeDP(decodedInstruction decoded, uint32_t* registers) {
 }
 
 
-<<<<<<< HEAD
+
 decodedInstruction decodeDT(uint32_t instruction) {
     decodedInstruction decoded;
     decoded.type = DATA_TRANSFER;
@@ -401,30 +401,28 @@ void executeDT(decodedInstruction decoded, uint32_t* registers) {
 
 // LOAD from memory into register (l=1)
     if (decoded.p == 1 && decoded.u == 1 && decoded.l == 1) {
-        registers[rd] = mainMemory[registers[decoded.rn + offset]];
+        registers[decoded.rd] = mainMemory[registers[decoded.rn + offset]];
     } else if (decoded.p == 1 && decoded.u == 0 && decoded.l == 1) {
-        registers[rd] = mainMemory[registers[decoded.rn - offset]];
+        registers[decoded.rd] = mainMemory[registers[decoded.rn - offset]];
     } else if (decoded.p == 0 && decoded.u == 1 && decoded.l == 1) {
-        registers[rd] = mainMemory[registers[decoded.rn] + offset]];
+        registers[decoded.rd] = mainMemory[registers[decoded.rn] + offset]];
     } else if (decoded.p == 0 && decoded.u == 0 && decoded.l == 1) {
-        registers[rd] = mainMemory[registers[decoded.rn] - offset]];
+        registers[decoded.rd] = mainMemory[registers[decoded.rn] - offset]];
     }
 
-// WRITE from memory to register to memory (l=0)
+// STORE from register to memory (l=0)
 
     if (decoded.p == 1 && decoded.u == 1 && decoded.l == 0) {
-        mainMemory[registers[rd]] = mainMemory[registers[decoded.rn + offset]];
+        mainMemory[registers[decoded.rd]] = registers[decoded.rn + offset];
     } else if (decoded.p == 1 && decoded.u == 0 && decoded.l == 0) {
-        mainMemory[registers[rd]] = mainMemory[registers[decoded.rn - offset]];
+        mainMemory[registers[decoded.rd]] = registers[decoded.rn - offset];
     }  else if (decoded.p == 0 && decoded.u == 1 && decoded.l == 0) {
-        mainMemory[registers[rd]] = mainMemory[registers[decoded.rn] + offset]];
+        mainMemory[registers[decoded.rd]] = registers[decoded.rn] + offset;
     } else if (decoded.p == 0 && decoded.u == 0 && decoded.l == 0) {
-        mainMemory[registers[rd]] = mainMemory[registers[decoded.rn] - offset]];
+        mainMemory[registers[decoded.rd]] = registers[decoded.rn] - offset;
     }
 
   }
-=======
->>>>>>> c6bd655578344967f3998bcfab5d80dd0ab8ee03
 
 int main(int argc, char **argv) {
 
@@ -497,12 +495,4 @@ int main(int argc, char **argv) {
     free(registers);
     return 0;
 
-<<<<<<< HEAD
 }
-=======
-
-
-}
-
-
->>>>>>> c6bd655578344967f3998bcfab5d80dd0ab8ee03
