@@ -133,7 +133,7 @@ void executeDP(decodedInstruction decoded, int32_t* registers) {
     }
 
     // Interpreting operand2
-    uint32_t op2 = 0;
+    int32_t op2 = 0;
     uint8_t carry = 0;
 
     if (decoded.i == 1) {
@@ -146,7 +146,7 @@ void executeDP(decodedInstruction decoded, int32_t* registers) {
     else {
         // To extract the last 4 bits
         uint8_t rm = extractBits(decoded.operand2, 4, 1);
-        uint32_t rmExtend = rm;
+        uint32_t val = registers[rm];
         // To extract the 5-bit shift value
         uint8_t shiftVal = extractBits(decoded.operand2, 5, 8);
         // To extract the 2 bit shift type
@@ -154,30 +154,30 @@ void executeDP(decodedInstruction decoded, int32_t* registers) {
 
         //Logical left lsl
         if (shiftType == 0) {
-            carry = CHECK_BIT(rmExtend, 32 - shiftVal);
-            op2 = rmExtend << shiftVal;
+            carry = CHECK_BIT(val, 32 - shiftVal);
+            op2 = val << shiftVal;
         }
         // Logical right lsr
         else if (shiftType == 1) {
-            carry = CHECK_BIT(rmExtend, shiftVal - 1);
-            op2 = rmExtend >> shiftVal;
+            carry = CHECK_BIT(val, shiftVal - 1);
+            op2 = val >> shiftVal;
         }
         // Arithmetic right
         else if (shiftType == 2) {
-            carry = CHECK_BIT(rmExtend, shiftVal - 1);
-            rmExtend = rmExtend >> shiftVal;
-            if (CHECK_BIT(rmExtend, 31) == 1) {
+            carry = CHECK_BIT(val, shiftVal - 1);
+            val = val >> shiftVal;
+            if (CHECK_BIT(val, 31) == 1) {
                 uint32_t mask = intPow(2, 32 - shiftVal) * (intPow(2, shiftVal) - 1);
-                op2 = rmExtend | mask;
+                op2 = val | mask;
             }
             else {
-                op2 = rmExtend;
+                op2 = val;
             }
         }
         // Right rotate
         else if (shiftType == 3) {
-            carry = CHECK_BIT(rmExtend, shiftVal - 1);
-            op2 = rightRotate(rmExtend, shiftVal);
+            carry = CHECK_BIT(val, shiftVal - 1);
+            op2 = rightRotate(val, shiftVal);
         }
     }
 
@@ -465,16 +465,10 @@ int main(int argc, char **argv) {
     int32_t* registers = malloc(17 * sizeof(int32_t));
     memset(registers, 0, 17 * sizeof(int32_t));
 
-    decodedInstruction decoded;
 
-    uint32_t fetched;
-
-    int decodeAvailable = 0;
-    int executeAvailable = 0;
-    int halt = 0;
 
     // The three stage pipeline
-    while (1) {
+    /*while (1) {
         if (executeAvailable) {
             if (halt) {
                 break;
@@ -484,7 +478,7 @@ int main(int argc, char **argv) {
                     case DATA_PROCESSING : executeDP(decoded, registers); break;
                     case MULTIPLY : executeMultiply(decoded, registers); break;
                     case DATA_TRANSFER : executeDT(decoded, registers, mainMemory); break;
-                    case BRANCH : executeBranch(decoded, registers); break;
+                    case BRANCH : executeBranch(decoded, registers); executeAvailable = 0; break;
                     // should be unreachable
                     default : break;
                 }
@@ -512,6 +506,51 @@ int main(int argc, char **argv) {
             executeAvailable = 1;
         }
         decodeAvailable = 1;
+    }*/
+
+    decodedInstruction decoded;
+    uint32_t fetched;
+
+    int decodeAvailable = 0;
+    int fetchAvailable = 0;
+    int halt = 0;
+
+    while (1) {
+        // The execution stage of the pipeline.
+        if (decodeAvailable) {
+            if (halt) {
+                break;
+            }
+            switch (decoded.type) {
+                    case DATA_PROCESSING : executeDP(decoded, registers); break;
+                    case MULTIPLY : executeMultiply(decoded, registers); break;
+                    case DATA_TRANSFER : executeDT(decoded, registers, mainMemory); break;
+                    case BRANCH : executeBranch(decoded, registers); decodeAvailable = 0; fetchAvailable = 0; break;
+                    // should be unreachable
+                    default : break;
+            }
+        }
+
+        // The decode stage of the pipeline.
+        if (fetchAvailable) {
+            decodeAvailable = 1;
+            if (fetched == 0) {
+                halt = 1;
+            }
+            else {
+                switch (getInstructionType(fetched)) {
+                    case DATA_PROCESSING : decoded = decodeDP(fetched); break;
+                    case MULTIPLY : decoded = decodeMultiply(fetched); break;
+                    case DATA_TRANSFER : decoded = decodeDT(fetched); break;
+                    case BRANCH : decoded = decodeBranch(fetched); break;
+                    // should be unreachable
+                    default : break;
+                }
+            }
+        }
+        fetched = ((uint32_t*)(&mainMemory[registers[15]]))[0];
+        fetchAvailable = 1;
+        registers[15] += 4;
     }
 
     printf("Registers:\n");
