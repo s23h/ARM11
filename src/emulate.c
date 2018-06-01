@@ -2,8 +2,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
+#include <tclDecls.h>
 
 #define CHECK_BIT(val, bit_no) (((val) >> (bit_no)) & 1)
+#define INT_MAX 4294967295;
 
 /*
 void printBits(uint32_t x) {
@@ -63,6 +65,10 @@ uint32_t extractBits(uint32_t number, int k, int p)
     return (((1 << k) - 1) & (number >> (p - 1)));
 }
 
+uint32_t extractBitsFrom64(uint64_t number, int k, int p)
+{
+    return (((1 << k) - 1) & (number >> (p - 1)));
+}
 
 // Represents a data processing instruction
 typedef struct {
@@ -87,20 +93,28 @@ typedef struct {
 decodedInstruction decodeDP(uint32_t instruction) {
     decodedInstruction decoded;
     decoded.type = DATA_PROCESSING;
+
     uint32_t result = extractBits(instruction, 4, 29);
     decoded.cond = ((uint8_t*)(&result))[0];
+
     result = extractBits(instruction, 1, 26);
     decoded.i = ((uint8_t*)(&result))[0];
+
     result = extractBits(instruction, 4, 22);
     decoded.opcode = ((uint8_t*)(&result))[0];
+
     result = extractBits(instruction, 1, 21);
     decoded.s = ((uint8_t*)(&result))[0];
+
     result = extractBits(instruction, 4, 17);
     decoded.rn = ((uint8_t*)(&result))[0];
+
     result = extractBits(instruction, 4, 13);
     decoded.rd = ((uint8_t*)(&result))[0];
+
     result = extractBits(instruction, 12, 1);
     decoded.operand2 = ((uint16_t*)(&result))[0];
+
     return decoded;
 }
 
@@ -140,7 +154,7 @@ uint32_t rightRotate(uint32_t n, unsigned int d)
    return (n >> d)|(n << (32 - d));
 }
 
-uint32_t pow(uint32_t x,int n)
+uint32_t pow(uint32_t x, int n)
 {
     int i; /* Variable used in loop counter */
     uint32_t number = 1;
@@ -206,9 +220,81 @@ void executeDP(decodedInstruction decoded, uint32_t* registers) {
     }
 }
 
+decodedInstruction decodeMultiply(uint32_t instruction) {
+    decodedInstruction decoded;
+    decoded.type = MULTIPLY;
+
+    uint32_t result = extractBits(instruction, 4, 29);
+    decoded.cond = ((uint8_t*)(&result))[0];
+
+    result = extractBits(instruction, 1, 22);
+    decoded.a = ((uint8_t*)(&result))[0];
+
+    result = extractBits(instruction, 1, 21);
+    decoded.s = ((uint8_t*)(&result))[0];
+
+    result = extractBits(instruction, 4, 17);
+    decoded.rd = ((uint8_t*)(&result))[0];
+
+    result = extractBits(instruction, 4, 13);
+    decoded.rn = ((uint8_t*)(&result))[0];
+
+    result = extractBits(instruction, 4, 9);
+    decoded.rs = ((uint8_t*)(&result))[0];
+
+    result = extractBits(instruction, 4, 1);
+    decoded.rm = ((uint8_t*)(&result))[0];
+
+    return decoded;
+}
+
+void executeMultiply(decodedInstruction decoded, uint32_t* registers) {
+    if (!checkCondition(decoded.cond, registers)) {
+        return;
+    }
+
+    uint32_t result;
+
+    uint32_t op1 = registers[decoded.rm];
+    uint32_t op2 = registers[decoded.rs];
+
+    uint64_t partialResult = multiply(op1, op2);
+    result = extractBitsFrom64(partialResult, 32, 1);
+
+    if (decoded.a == 1) {
+        uint32_t acc = registers[decoded.rn];
+
+        uint8_t carry = 0; //carry
+        while (acc != 0) {
+            //find carry and shift it left
+            carry = (result & acc) << 1;
+            //find the sum
+            result = result ^ acc;
+            acc = carry;
+        }
+
+}
+
+uint64_t multiply(uint32_t n1, uint32_t n2) {
+    uint64_t result = 0;
+
+    uint32_t R = n1;
+    uint32_t M = n2;
+
+    while (R > 0) {
+        if (R & 1) {
+            result += M;
+        }
+        R >>= 1;
+        M <<= 1;
+    }
+
+    return result;
+}
+
 int main(int argc, char **argv) {
 
-    // The main memory of the Raspberry Pi
+        // The main memory of the Raspberry Pi
     uint8_t* mainMemory = malloc(65536);
     memset(mainMemory, 0, 65536);
 
@@ -257,4 +343,5 @@ int main(int argc, char **argv) {
     free(mainMemory);
     free(registers);
     return 0;
+    }
 }
