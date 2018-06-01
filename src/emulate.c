@@ -386,42 +386,39 @@ void executeDT(decodedInstruction decoded, int32_t* registers, uint8_t* mainMemo
       offset = decoded.operand2;
     } else {
       // To extract the last 4 bits
-      uint16_t mask = 15;
-      uint8_t rm = decoded.operand2 & mask;
-      uint32_t rmExtend = rm;
+      uint8_t rm = extractBits(decoded.operand2, 4, 1);
+      uint32_t val = registers[rm];
       // To extract the 5-bit shift value
-      mask = 3968;
-      uint8_t shiftVal = decoded.operand2 & mask;
+      uint8_t shiftVal = extractBits(decoded.operand2, 5, 8);
       // To extract the 2 bit shift type
-      mask = 96;
-      uint8_t shiftType = decoded.operand2 & mask;
-      uint8_t carry = 0;
+      uint8_t shiftType = extractBits(decoded.operand2, 2, 6);
+
       //Logical left lsl
       if (shiftType == 0) {
-          carry = CHECK_BIT(rmExtend, 32 - shiftVal);
-          offset = rmExtend << shiftVal;
+          carry = CHECK_BIT(val, 32 - shiftVal);
+          offset = val << shiftVal;
       }
       // Logical right lsr
       else if (shiftType == 1) {
-          carry = CHECK_BIT(rmExtend, shiftVal - 1);
-          offset = rmExtend >> shiftVal;
+          carry = CHECK_BIT(val, shiftVal - 1);
+          offset = val >> shiftVal;
       }
       // Arithmetic right
       else if (shiftType == 2) {
-          carry = CHECK_BIT(rmExtend, shiftVal - 1);
-          rmExtend = rmExtend >> shiftVal;
-          if (CHECK_BIT(rmExtend, 31) == 1) {
-              mask = intPow(2, 32 - shiftVal) * (intPow(2, shiftVal) - 1);
-              offset = rmExtend | mask;
+          carry = CHECK_BIT(val, shiftVal - 1);
+          val = val >> shiftVal;
+          if (CHECK_BIT(val, 31) == 1) {
+              uint32_t mask = intPow(2, 32 - shiftVal) * (intPow(2, shiftVal) - 1);
+              offset = val | mask;
           }
           else {
-              offset = rmExtend;
+              offset = val;
           }
       }
       // Right rotate
       else if (shiftType == 3) {
-          carry = CHECK_BIT(rmExtend, shiftVal - 1);
-          offset = rightRotate(rmExtend, shiftVal);
+          carry = CHECK_BIT(val, shiftVal - 1);
+          offset = rightRotate(val, shiftVal);
       }
 
     }
