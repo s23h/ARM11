@@ -3,6 +3,9 @@
 #include <string.h>
 #include <stdint.h>
 
+char*** tokenise(const char* fileName);
+char** breakDown(char *line, const char *delim);
+
 void printBits(uint32_t x) {
     int i;
     uint32_t mask = 1 << 31;
@@ -20,6 +23,13 @@ void printBits(uint32_t x) {
 }
 
 int main(int argc, char **argv) {
+  char *** stringz = tokenise(argv[1]);
+  for (int i=0; i< sizeof(stringz); i++) {
+    for (int j=0; j< sizeof(stringz[i]); j++) {
+      printf("%s", strings[i][j]);
+    }
+  }
+
   return EXIT_SUCCESS;
 }
 
