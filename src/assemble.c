@@ -123,8 +123,7 @@ void remove_colon(char *str) {
   str[length - 1] = '\0';
 }
 
-void parseArgumentsDP(decodedInstruction d, char** arguments) {
-  d.s = 0;
+void parseArgumentsDP(decodedInstruction d, char** arguments, int ) {
   d.rd = (int) strtol(tokens[i][1]++, (char **)NULL, 10);
   d.rn = (int) strtol(tokens[i][2]++, (char **)NULL, 10);
   if (tokens[i][3][0] == '#'){
@@ -142,52 +141,15 @@ decodedInstruction* readTokens(char*** tokens) {
 
   for (int i=0; i<sizeof(tokens); i++) {
       if (is_label(tokens[i][0])) {
-        remove_colon(tokens[i][0]);
+        remove_colon(tokens[i][0]); // TODO: WHAT TO DO IF ITS A LABEL!
       } else {
         decodedInstruction d;
+        d.s = 0;
+        d.cond = 14;
 
-        if (!strcmp(tokens[i][0], "and")) {
-          d.type = DATA_PROCESSING;
-          d.opcode = 0;
-          d.cond = 14;
-          parseArgumentsDP(d, tokens[i]);
-          instructions[i] = d;
-        }
-        if (!strcmp(tokens[i][0], "eor")) {
-          d.type = DATA_PROCESSING;
-          d.opcode = 1;
-          d.cond = 14;
-          parseArgumentsDP(d, tokens[i]);
-        }
-        if (!strcmp(tokens[i][0], "sub")) {
-          d.type = DATA_PROCESSING;
-          d.opcode = 2;
-          d.cond = 14;
-          parseArgumentsDP(d, tokens[i]);
-        }
-        if (!strcmp(tokens[i][0], "rsb")) {
-          d.type = DATA_PROCESSING;
-          d.opcode = 3;
-          d.cond = 14;
-          parseArgumentsDP(d, tokens[i]);
-        }
-        if (!strcmp(tokens[i][0], "add")) {
-          d.type = DATA_PROCESSING;
-          d.opcode = 4;
-          d.cond = 14;
-          parseArgumentsDP(d, tokens[i]);
-        }
-        if (!strcmp(tokens[i][0], "oor")) {
-          d.type = DATA_PROCESSING;
-          d.opcode = 12;
-          d.cond = 14;
-          parseArgumentsDP(d, tokens[i]);
-        }
         if (!strcmp(tokens[i][0], "mov")) {
           d.type = DATA_PROCESSING;
           d.opcode = 13;
-          d.cond = 14;
-          d.s = 0;
           d.rd = (int) strtol(tokens[i][1]++, (char **)NULL, 10);
           if (tokens[i][2][0] == '#'){
             d.i = 1;
@@ -197,33 +159,62 @@ decodedInstruction* readTokens(char*** tokens) {
             d.i = 0;
             d.operand2 = (int) strtol(tokens[i][3]++, (char **)NULL, 10);
           }
+
+          instructions[i] = d;
+
+
+        } else {
+
+          if (!strcmp(tokens[i][0], "and")) {
+            d.type = DATA_PROCESSING;
+            d.opcode = 0;
+          }
+          if (!strcmp(tokens[i][0], "eor")) {
+            d.type = DATA_PROCESSING;
+            d.opcode = 1;
+          }
+          if (!strcmp(tokens[i][0], "sub")) {
+            d.type = DATA_PROCESSING;
+            d.opcode = 2;
+          }
+          if (!strcmp(tokens[i][0], "rsb")) {
+            d.type = DATA_PROCESSING;
+            d.opcode = 3;
+          }
+          if (!strcmp(tokens[i][0], "add")) {
+            d.type = DATA_PROCESSING;
+            d.opcode = 4;
+          }
+          if (!strcmp(tokens[i][0], "oor")) {
+            d.type = DATA_PROCESSING;
+            d.opcode = 12;
+          }
+          if (!strcmp(tokens[i][0], "tst")) {
+            d.type = DATA_PROCESSING;
+            d.opcode = 8;
+            d.s = 1;
+          }
+
+          if (!strcmp(tokens[i][0], "teq")) {
+            d.type = DATA_PROCESSING;
+            d.opcode = 9;
+            d.s = 1;
+          }
+
+          if (!strcmp(tokens[i][0], "cmp")) {
+            d.type = DATA_PROCESSING;
+            d.opcode = 10;
+            d.s = 1;
+          }
+
+          if (d.type = DATA_PROCESSING) {
+            parseArgumentsDP(d, tokens[i]);
+            instructions[i] = d;
+          }
+
         }
 
-        if (!strcmp(tokens[i][0], "tst")) {
-          d.type = DATA_PROCESSING;
-          d.opcode = 8;
-          d.cond = 14;
-          parseArgumentsDP(d, tokens[i]);
-          d.s = 1;
-        }
 
-        if (!strcmp(tokens[i][0], "teq")) {
-          d.type = DATA_PROCESSING;
-          d.opcode = 9;
-          d.cond = 14;
-          parseArgumentsDP(d, tokens[i]);
-          d.s = 1;
-        }
-
-        if (!strcmp(tokens[i][0], "cmp")) {
-          d.type = DATA_PROCESSING;
-          d.opcode = 10;
-          d.cond = 14;
-          parseArgumentsDP(d, tokens[i]);
-          d.s = 1;
-        }
-
-        instructions[i] = d;
 
       }
   }
