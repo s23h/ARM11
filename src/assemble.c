@@ -23,9 +23,9 @@ void printBits(uint32_t x) {
 }
 
 int main(int argc, char **argv) {
-  char *** stringz = tokenise(argv[1]);
-  for (int i=0; i< sizeof(stringz); i++) {
-    for (int j=0; j< sizeof(stringz[i]); j++) {
+  char *** strings = tokenise(argv[1]);
+  for (int i=0; i< sizeof(strings); i++) {
+    for (int j=0; j< sizeof(strings[i]); j++) {
       printf("%s", strings[i][j]);
     }
   }
@@ -62,7 +62,7 @@ char*** tokenise(const char* fileName)
     char line[511];
 
     while (fgets(line, sizeof(line), file)) {
-        char** token = breakDown(line, ' ');
+        char** token = breakDown(line, " ,");
     }
     /* may check feof here to make a difference between eof and io failure -- network
        timeout for instance */
@@ -114,16 +114,16 @@ typedef struct {
     uint32_t offset;
 } decodedInstruction;
 
-static bool is_label(char *instruction) {
+static int is_label(char *instruction) {
   return instruction[strlen(instruction) - 1] == ':';
 }
 
 void remove_colon(char *str) {
   //replaces ':' with EOF
-  str[length - 1] = '\0';
+//  str[length - 1] = '\0';
 }
 
-void parseArgumentsDP(decodedInstruction d, char** arguments, int ) {
+void parseArgumentsDP(decodedInstruction d, char** tokens, int i) {
   d.rd = (int) strtol(tokens[i][1]++, (char **)NULL, 10);
   d.rn = (int) strtol(tokens[i][2]++, (char **)NULL, 10);
   if (tokens[i][3][0] == '#'){
@@ -136,10 +136,13 @@ void parseArgumentsDP(decodedInstruction d, char** arguments, int ) {
   }
 }
 
+
+
 decodedInstruction* readTokens(char*** tokens) {
   decodedInstruction* instructions = malloc(sizeof(tokens)*sizeof(decodedInstruction));
-
+  uint32_t address = 0;
   for (int i=0; i<sizeof(tokens); i++) {
+    address += 4;
       if (is_label(tokens[i][0])) {
         remove_colon(tokens[i][0]); // TODO: WHAT TO DO IF ITS A LABEL!
       } else {
@@ -159,67 +162,59 @@ decodedInstruction* readTokens(char*** tokens) {
             d.i = 0;
             d.operand2 = (int) strtol(tokens[i][3]++, (char **)NULL, 10);
           }
+        }
 
+        if (!strcmp(tokens[i][0], "and")) {
+          d.type = DATA_PROCESSING;
+          d.opcode = 0;
+        }
+        if (!strcmp(tokens[i][0], "eor")) {
+          d.type = DATA_PROCESSING;
+          d.opcode = 1;
+        }
+        if (!strcmp(tokens[i][0], "sub")) {
+          d.type = DATA_PROCESSING;
+          d.opcode = 2;
+        }
+        if (!strcmp(tokens[i][0], "rsb")) {
+          d.type = DATA_PROCESSING;
+          d.opcode = 3;
+        }
+        if (!strcmp(tokens[i][0], "add")) {
+          d.type = DATA_PROCESSING;
+          d.opcode = 4;
+        }
+        if (!strcmp(tokens[i][0], "oor")) {
+          d.type = DATA_PROCESSING;
+          d.opcode = 12;
+        }
+        if (!strcmp(tokens[i][0], "tst")) {
+          d.type = DATA_PROCESSING;
+          d.opcode = 8;
+          d.s = 1;
+        }
+
+        if (!strcmp(tokens[i][0], "teq")) {
+          d.type = DATA_PROCESSING;
+          d.opcode = 9;
+          d.s = 1;
+        }
+
+        if (!strcmp(tokens[i][0], "cmp")) {
+          d.type = DATA_PROCESSING;
+          d.opcode = 10;
+          d.s = 1;
+        }
+
+        if (d.type = DATA_PROCESSING) {
+          parseArgumentsDP(d, tokens[i], i);
           instructions[i] = d;
-
-
-        } else {
-
-          if (!strcmp(tokens[i][0], "and")) {
-            d.type = DATA_PROCESSING;
-            d.opcode = 0;
-          }
-          if (!strcmp(tokens[i][0], "eor")) {
-            d.type = DATA_PROCESSING;
-            d.opcode = 1;
-          }
-          if (!strcmp(tokens[i][0], "sub")) {
-            d.type = DATA_PROCESSING;
-            d.opcode = 2;
-          }
-          if (!strcmp(tokens[i][0], "rsb")) {
-            d.type = DATA_PROCESSING;
-            d.opcode = 3;
-          }
-          if (!strcmp(tokens[i][0], "add")) {
-            d.type = DATA_PROCESSING;
-            d.opcode = 4;
-          }
-          if (!strcmp(tokens[i][0], "oor")) {
-            d.type = DATA_PROCESSING;
-            d.opcode = 12;
-          }
-          if (!strcmp(tokens[i][0], "tst")) {
-            d.type = DATA_PROCESSING;
-            d.opcode = 8;
-            d.s = 1;
-          }
-
-          if (!strcmp(tokens[i][0], "teq")) {
-            d.type = DATA_PROCESSING;
-            d.opcode = 9;
-            d.s = 1;
-          }
-
-          if (!strcmp(tokens[i][0], "cmp")) {
-            d.type = DATA_PROCESSING;
-            d.opcode = 10;
-            d.s = 1;
-          }
-
-          if (d.type = DATA_PROCESSING) {
-            parseArgumentsDP(d, tokens[i]);
-            instructions[i] = d;
-          }
 
         }
 
 
 
+
       }
   }
-
-
-
-
 }
