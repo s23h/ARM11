@@ -219,6 +219,45 @@ int32_t assembleDP(char** tokens) {
     return instruction;
 }
 
+// Returns a 32-bit value representing the machine code instruction corresponding to the specified
+// Multiply instruction, represented in token form
+int32_t assembleMult(char** tokens) {
+    // Sets the Accumulate bit
+    int a = 0;
+    if (strcmp(tokens[0], "mla") == 0) {
+        a = 1;
+    }
+
+    char* ptr;
+
+    // Sets the register values
+    uint8_t rd = (uint8_t)(strtol(tokens[1] + 1, &ptr, 10));
+    uint8_t rm = (uint8_t)(strtol(tokens[2] + 1, &ptr, 10));
+    uint8_t rs = (uint8_t)(strtol(tokens[3] + 1, &ptr, 10));
+
+    uint8_t rn = 0;
+    if (a) {
+        rn = (uint8_t)(strtol(tokens[4] + 1, &ptr, 10));
+    }
+
+    int32_t instruction = -536870768;
+    setBit32(&instruction, 21, a);
+
+    int32_t mask = rd << 16;
+    instruction = instruction | mask;
+
+    mask = rn << 12;
+    instruction = instruction | mask;
+
+    mask = rs << 8;
+    instruction = instruction | mask;
+
+    mask = rm;
+    instruction = instruction | mask;
+
+    return instruction;
+}
+
 decodedInstruction* readTokens(char*** tokens) {
   decodedInstruction* instructions = malloc(sizeof(tokens)*sizeof(decodedInstruction));
   uint32_t address = 0;
