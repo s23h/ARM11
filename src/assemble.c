@@ -19,8 +19,22 @@ void printBits(uint32_t x) {
     printf("\n");
 }
 
-int main(int argc, char **argv) {
-  return EXIT_SUCCESS;
+int main(void)
+{
+    char** breakDown(char *line, const char *delim);
+
+    char s[] = "Hello World,51,66";
+    char **array = breakDown( s, " ," );
+
+    if ( array != NULL )
+    {
+        for ( char **p = array; *p; ++p ) puts( *p );
+
+        for ( char **p = array; *p; ++p ) free( *p );
+        free( array );
+    }
+
+    return 0;
 }
 
 void writeToFile(const char* sourceName, const char* destName) {
@@ -48,16 +62,36 @@ void writeToFile(const char* sourceName, const char* destName) {
 
 char*** tokenise(const char* fileName)
 {
-    FILE* file = fopen(fileName, "r"); /* should check the result */
-    char line[511];
+    char*** tokens[MAXL] = NULL;
+    char** temp[1][MAXC] = NULL; /* pointer to array of type char [MAXC] */
+    int i, n = 0;
+    FILE *file = fopen(fileName, "rb");
 
-    while (fgets(line, sizeof(line), file)) {
-        char** token = breakDown(line, ' ');
+    if (file == NULL) {  /* valdiate file open for reading */
+        perror("Error opening the source binary file!\n");
+        exit(EXIT_FAILURE);
     }
-    /* may check feof here to make a difference between eof and io failure -- network
-       timeout for instance */
 
-    fclose(file);
+    if (!(tokens = malloc (MAXL * sizeof *tokens))) { /* allocate MAXL arrays */
+        perror("Error: virtual memory exhausted 'tokens'!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    while (n < MAXL && fgets (temp[0], MAXC, file)) { /* read each line */
+        char** lineOfTokens = breakDown(temp[0], ", ");
+        tokens[n] = lineOfTokens;
+
+        char *p = lines[n];                  /* assign pointer */
+        for (; *p && *p != '\n'; p++) {
+        }                                    /* find 1st '\n'  */
+        *p = 0;
+        n++;                                 /* nul-terminate  */
+    }
+    if (file != stdin) {
+        fclose(file);
+    }
+
+    free(tokens);
 }
 
 char** breakDown(char *line, const char *delim) {
