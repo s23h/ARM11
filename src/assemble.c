@@ -2,29 +2,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
+#include "symbolTable.h"
 
 #define MAXC 511
 #define MAXL 10
 
+// The maximum possible number of tokens in a line.
+#define MAX_TOKENS 6
+
 char*** tokenise(const char* fileName);
 char** breakDown(char *line, const char *delim);
-
-void printBits(uint32_t x) {
-    int i;
-    uint32_t mask = 1 << 31;
-    for (i=0; i<32; ++i) {
-        if ((x & mask) == 0) {
-            printf("0");
-        }
-        else
-        {
-            printf("1");
-        }
-        x = x << 1;
-    }
-    printf("\n");
-}
-
 
 int main(int argc, char **argv) {
   char *** strings = tokenise(argv[1]);
@@ -92,13 +79,13 @@ char*** tokenise(const char* fileName)
         fclose(file);
     }
 
-
-
     free(tokens);
 
 }
 
-char** breakDown(char *line, const char *delim) {
+// Breaks down a line into its constituents tokens -- e.g. mov r1, r2 becomes a string array containing
+// mov, r1, r2
+char** tokenize(char *line, char* delim) {
     char **array = malloc(sizeof(char *));
     if (array) {
         size_t n = 1;
@@ -164,7 +151,73 @@ void parseArgumentsDP(decodedInstruction d, char** line) {
   }
 }
 
+// Returns a 32-bit value representing the machine code instruction corresponding to the specified
+// Data Processing instruction, represented in token form
+int32_t assembleDP(char** tokens) {
+    uint32_t opcode = tableLookup(&opcodes, tokens[0]);
 
+    uint8_t rd = 0;
+    uint8_t rn = 0;
+    uint32_t operand2 = 0;
+    int s = 0;
+
+    int op2Position = 0;
+    int base = 10;
+
+    char* ptr;
+    switch (opcode) {
+        case 8:
+        case 9:
+        case 10:
+            op2Position = 2;
+            s = 1;
+            rd = 0;
+            rn = (uint8_t)(strtol(tokens[1] + 1, &ptr, 10)); break;
+        case 13:
+            op2Position = 2;
+            s = 0;
+            rd = (uint8_t)(strtol(tokens[1] + 1, &ptr, 10));
+            rn = 0; break;
+        default:
+            op2Position = 3;
+            s = 0;
+            rd = (uint8_t)(strtol(tokens[1] + 1, &ptr, 10));
+            rn = (uint8_t)(strtol(tokens[2] + 1, &ptr, 10)); break;
+    }
+
+    if (tokens[op2Position][1] == '0' && tokens[op2Position][2] == 'x') {
+        base = 16;
+    }
+
+    operand2 = (uint32_t)(strtol(tokens[op2Position] + 1, &ptr, base));
+
+    if (operand2 > 255) {
+        printf("Immediate constant cannot be represented using 8 bits!");
+        exit(EXIT_FAILURE);
+    }
+
+    int32_t instruction = -503316480;
+
+    // Set the S bit
+    setBit32(&instruction, 20, s);
+
+    // Set the opcode
+    int32_t mask = opcode << 21;
+    instruction = instruction | mask;
+
+    // Set Rn
+    mask = rn << 16;
+    instruction = instruction | mask;
+
+    // Set Rd
+    mask = rd << 12;
+    instruction = instruction | mask;
+
+    mask = operand2;
+    instruction = instruction | mask;
+
+    return instruction;
+}
 
 decodedInstruction* readTokens(char*** tokens) {
   decodedInstruction* instructions = malloc(sizeof(tokens)*sizeof(decodedInstruction));
