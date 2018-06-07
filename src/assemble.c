@@ -3,6 +3,9 @@
 #include <string.h>
 #include <stdint.h>
 
+#define MAXC 511
+#define MAXL 10
+
 char*** tokenise(const char* fileName);
 char** breakDown(char *line, const char *delim);
 
@@ -59,8 +62,8 @@ void writeToFile(const char* sourceName, const char* destName) {
 
 char*** tokenise(const char* fileName)
 {
-    char*** tokens[MAXL] = NULL;
-    char** temp[1][MAXC] = NULL; /* pointer to array of type char [MAXC] */
+    char*** tokens; //[MAXL][][] = NULL;
+    char** temp;//[1][MAXC] = NULL; /* pointer to array of type char [MAXC] */
     int i, n = 0;
     FILE *file = fopen(fileName, "rb");
 
@@ -78,8 +81,8 @@ char*** tokenise(const char* fileName)
         char** lineOfTokens = breakDown(temp[0], ", ");
         tokens[n] = lineOfTokens;
 
-        char *p = lines[n];                  /* assign pointer */
-        for (; *p && *p != '\n'; p++) {
+        char **p = tokens[n];                  /* assign pointer */
+        for (; **p && **p != '\n'; p++) {
         }                                    /* find 1st '\n'  */
         *p = 0;
         n++;                                 /* nul-terminate  */
@@ -89,7 +92,10 @@ char*** tokenise(const char* fileName)
         fclose(file);
     }
 
+
+
     free(tokens);
+
 }
 
 char** breakDown(char *line, const char *delim) {
@@ -145,16 +151,16 @@ void remove_colon(char *str) {
 //  str[length - 1] = '\0';
 }
 
-void parseArgumentsDP(decodedInstruction d, char** tokens, int i) {
-  d.rd = (int) strtol(tokens[i][1]++, (char **)NULL, 10);
-  d.rn = (int) strtol(tokens[i][2]++, (char **)NULL, 10);
-  if (tokens[i][3][0] == '#'){
+void parseArgumentsDP(decodedInstruction d, char** line) {
+  d.rd = (int) strtol(line[1]++, (char **)NULL, 10);
+  d.rn = (int) strtol(line[2]++, (char **)NULL, 10);
+  if (line[3][0] == '#'){
     d.i = 1;
-    int base = (tokens[i][3][1] == '0' && tokens[i][3][1] == 'x') ? 16 : 10;
-    d.operand2 = (int) strtol(tokens[i][1]++, (char **)NULL, base);
+    int base = (line[3][1] == '0' && line[3][1] == 'x') ? 16 : 10;
+    d.operand2 = (int) strtol(line[1]++, (char **)NULL, base);
   } else {
     d.i = 0;
-    d.operand2 = (int) strtol(tokens[i][3]++, (char **)NULL, 10);
+    d.operand2 = (int) strtol(line[3]++, (char **)NULL, 10);
   }
 }
 
@@ -228,8 +234,8 @@ decodedInstruction* readTokens(char*** tokens) {
           d.s = 1;
         }
 
-        if (d.type = DATA_PROCESSING) {
-          parseArgumentsDP(d, tokens[i], i);
+        if (d.type == DATA_PROCESSING) {
+          parseArgumentsDP(d, tokens[i]);
           instructions[i] = d;
 
         }
