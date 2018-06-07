@@ -3,6 +3,9 @@
 #include <string.h>
 #include <stdint.h>
 
+char*** tokenise(const char* fileName);
+char** breakDown(char *line, const char *delim);
+
 void printBits(uint32_t x) {
     int i;
     uint32_t mask = 1 << 31;
@@ -19,22 +22,16 @@ void printBits(uint32_t x) {
     printf("\n");
 }
 
-int main(void)
-{
-    char** breakDown(char *line, const char *delim);
 
-    char s[] = "Hello World,51,66";
-    char **array = breakDown( s, " ," );
-
-    if ( array != NULL )
-    {
-        for ( char **p = array; *p; ++p ) puts( *p );
-
-        for ( char **p = array; *p; ++p ) free( *p );
-        free( array );
+int main(int argc, char **argv) {
+  char *** strings = tokenise(argv[1]);
+  for (int i=0; i< sizeof(strings); i++) {
+    for (int j=0; j< sizeof(strings[i]); j++) {
+      printf("%s", strings[i][j]);
     }
+  }
 
-    return 0;
+  return EXIT_SUCCESS;
 }
 
 void writeToFile(const char* sourceName, const char* destName) {
@@ -87,6 +84,7 @@ char*** tokenise(const char* fileName)
         *p = 0;
         n++;                                 /* nul-terminate  */
     }
+
     if (file != stdin) {
         fclose(file);
     }
@@ -115,4 +113,130 @@ char** breakDown(char *line, const char *delim) {
         array[n - 1] = NULL;
     }
     return array;
+}
+
+typedef enum { DATA_PROCESSING, MULTIPLY, DATA_TRANSFER, BRANCH } instructionType;
+
+typedef struct {
+    instructionType type;
+    uint8_t cond;
+    uint8_t i;
+    uint8_t opcode;
+    uint8_t s;
+    uint8_t rn;
+    uint8_t rd;
+    uint16_t operand2;
+    uint8_t a;
+    uint8_t rs;
+    uint8_t rm;
+    uint8_t p;
+    uint8_t u;
+    uint8_t l;
+    uint8_t rest;
+    uint32_t offset;
+} decodedInstruction;
+
+static int is_label(char *instruction) {
+  return instruction[strlen(instruction) - 1] == ':';
+}
+
+void remove_colon(char *str) {
+  //replaces ':' with EOF
+//  str[length - 1] = '\0';
+}
+
+void parseArgumentsDP(decodedInstruction d, char** tokens, int i) {
+  d.rd = (int) strtol(tokens[i][1]++, (char **)NULL, 10);
+  d.rn = (int) strtol(tokens[i][2]++, (char **)NULL, 10);
+  if (tokens[i][3][0] == '#'){
+    d.i = 1;
+    int base = (tokens[i][3][1] == '0' && tokens[i][3][1] == 'x') ? 16 : 10;
+    d.operand2 = (int) strtol(tokens[i][1]++, (char **)NULL, base);
+  } else {
+    d.i = 0;
+    d.operand2 = (int) strtol(tokens[i][3]++, (char **)NULL, 10);
+  }
+}
+
+
+
+decodedInstruction* readTokens(char*** tokens) {
+  decodedInstruction* instructions = malloc(sizeof(tokens)*sizeof(decodedInstruction));
+  uint32_t address = 0;
+  for (int i=0; i<sizeof(tokens); i++) {
+    address += 4;
+      if (is_label(tokens[i][0])) {
+        remove_colon(tokens[i][0]); // TODO: WHAT TO DO IF ITS A LABEL!
+      } else {
+        decodedInstruction d;
+        d.s = 0;
+        d.cond = 14;
+
+        if (!strcmp(tokens[i][0], "mov")) {
+          d.type = DATA_PROCESSING;
+          d.opcode = 13;
+          d.rd = (int) strtol(tokens[i][1]++, (char **)NULL, 10);
+          if (tokens[i][2][0] == '#'){
+            d.i = 1;
+            int base = (tokens[i][3][1] == '0' && tokens[i][3][1] == 'x') ? 16 : 10;
+            d.operand2 = (int) strtol(tokens[i][1]++, (char **)NULL, base);
+          } else {
+            d.i = 0;
+            d.operand2 = (int) strtol(tokens[i][3]++, (char **)NULL, 10);
+          }
+        }
+
+        if (!strcmp(tokens[i][0], "and")) {
+          d.type = DATA_PROCESSING;
+          d.opcode = 0;
+        }
+        if (!strcmp(tokens[i][0], "eor")) {
+          d.type = DATA_PROCESSING;
+          d.opcode = 1;
+        }
+        if (!strcmp(tokens[i][0], "sub")) {
+          d.type = DATA_PROCESSING;
+          d.opcode = 2;
+        }
+        if (!strcmp(tokens[i][0], "rsb")) {
+          d.type = DATA_PROCESSING;
+          d.opcode = 3;
+        }
+        if (!strcmp(tokens[i][0], "add")) {
+          d.type = DATA_PROCESSING;
+          d.opcode = 4;
+        }
+        if (!strcmp(tokens[i][0], "oor")) {
+          d.type = DATA_PROCESSING;
+          d.opcode = 12;
+        }
+        if (!strcmp(tokens[i][0], "tst")) {
+          d.type = DATA_PROCESSING;
+          d.opcode = 8;
+          d.s = 1;
+        }
+
+        if (!strcmp(tokens[i][0], "teq")) {
+          d.type = DATA_PROCESSING;
+          d.opcode = 9;
+          d.s = 1;
+        }
+
+        if (!strcmp(tokens[i][0], "cmp")) {
+          d.type = DATA_PROCESSING;
+          d.opcode = 10;
+          d.s = 1;
+        }
+
+        if (d.type = DATA_PROCESSING) {
+          parseArgumentsDP(d, tokens[i], i);
+          instructions[i] = d;
+
+        }
+
+
+
+
+      }
+  }
 }
