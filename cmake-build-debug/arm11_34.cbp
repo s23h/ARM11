@@ -112,6 +112,9 @@
 		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/assemble.c">
 			<Option target="arm11_34"/>
 		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/blink.c">
+			<Option target="arm11_34"/>
+		</Unit>
 		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/emulate.c">
 			<Option target="arm11_34"/>
 		</Unit>

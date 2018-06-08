@@ -150,6 +150,33 @@ src/assemble.c.s:
 	$(MAKE) -f CMakeFiles/arm11_34.dir/build.make CMakeFiles/arm11_34.dir/src/assemble.c.s
 .PHONY : src/assemble.c.s
 
+src/blink.o: src/blink.c.o
+
+.PHONY : src/blink.o
+
+# target to build an object file
+src/blink.c.o:
+	$(MAKE) -f CMakeFiles/arm11_34.dir/build.make CMakeFiles/arm11_34.dir/src/blink.c.o
+.PHONY : src/blink.c.o
+
+src/blink.i: src/blink.c.i
+
+.PHONY : src/blink.i
+
+# target to preprocess a source file
+src/blink.c.i:
+	$(MAKE) -f CMakeFiles/arm11_34.dir/build.make CMakeFiles/arm11_34.dir/src/blink.c.i
+.PHONY : src/blink.c.i
+
+src/blink.s: src/blink.c.s
+
+.PHONY : src/blink.s
+
+# target to generate assembly for a file
+src/blink.c.s:
+	$(MAKE) -f CMakeFiles/arm11_34.dir/build.make CMakeFiles/arm11_34.dir/src/blink.c.s
+.PHONY : src/blink.c.s
+
 src/emulate.o: src/emulate.c.o
 
 .PHONY : src/emulate.o
@@ -243,6 +270,9 @@ help:
 	@echo "... src/assemble.o"
 	@echo "... src/assemble.i"
 	@echo "... src/assemble.s"
+	@echo "... src/blink.o"
+	@echo "... src/blink.i"
+	@echo "... src/blink.s"
 	@echo "... src/emulate.o"
 	@echo "... src/emulate.i"
 	@echo "... src/emulate.s"

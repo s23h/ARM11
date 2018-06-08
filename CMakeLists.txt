@@ -20,4 +20,4 @@ add_executable(arm11_34
         src/symbolTable.c
         src/symbolTable.h
         src/utilities.c
-        src/utilities.h)
+        src/utilities.h src/blink.c)
