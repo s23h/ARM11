@@ -8,85 +8,126 @@
 		<Option virtualFolders="CMake Files\;"/>
 		<Build>
 			<Target title="all">
-				<Option working_dir="/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug"/>
+				<Option working_dir="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="rebuild_cache">
-				<Option working_dir="/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug"/>
+				<Option working_dir="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="edit_cache">
-				<Option working_dir="/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug"/>
+				<Option working_dir="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="arm11_34">
-				<Option output="/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/arm11_34" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug"/>
+				<Option output="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/arm11_34" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
+					<Add directory="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
 					<Add directory="/usr/local/include"/>
-					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/9.1.0/include"/>
-					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
-					<Add directory="/usr/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
 					<Add directory="/System/Library/Frameworks"/>
 					<Add directory="/Library/Frameworks"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 arm11_34"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 arm11_34"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="arm11_34/fast">
-				<Option output="/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/arm11_34" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug"/>
+				<Option output="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/arm11_34" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
+					<Add directory="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
 					<Add directory="/usr/local/include"/>
-					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/9.1.0/include"/>
-					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
-					<Add directory="/usr/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
 					<Add directory="/System/Library/Frameworks"/>
 					<Add directory="/Library/Frameworks"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 arm11_34/fast"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 arm11_34/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/Users/prem/Documents/C_Project/arm11_34/src/assemble.c">
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/CMakeCache.txt">
 			<Option target="arm11_34"/>
 		</Unit>
-		<Unit filename="/Users/prem/Documents/C_Project/arm11_34/src/emulate.c">
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile">
 			<Option target="arm11_34"/>
 		</Unit>
-		<Unit filename="/Users/prem/Documents/C_Project/arm11_34/CMakeLists.txt">
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/arm11_34.cbp">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/cmake_install.cmake">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/doc/Checkpoint.tex">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/doc/Makefile">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/doc/Report.tex">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/programs/gpio.s">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/Makefile">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/assemble.c">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/emulate.c">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/symbolTable.c">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/symbolTable.h">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/utilities.c">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/utilities.h">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
 	</Project>

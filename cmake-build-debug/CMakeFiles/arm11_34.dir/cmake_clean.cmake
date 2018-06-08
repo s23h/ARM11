@@ -1,6 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/arm11_34.dir/src/assemble.c.o"
   "CMakeFiles/arm11_34.dir/src/emulate.c.o"
+  "CMakeFiles/arm11_34.dir/src/symbolTable.c.o"
+  "CMakeFiles/arm11_34.dir/src/utilities.c.o"
   "arm11_34.pdb"
   "arm11_34"
 )

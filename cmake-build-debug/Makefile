@@ -48,10 +48,10 @@ RM = /Applications/CLion.app/Contents/bin/cmake/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/prem/Documents/C_Project/arm11_34
+CMAKE_SOURCE_DIR = /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/prem/Documents/C_Project/arm11_34/cmake-build-debug
+CMAKE_BINARY_DIR = /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/CMakeFiles /Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/CMakeFiles /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -177,6 +177,60 @@ src/emulate.c.s:
 	$(MAKE) -f CMakeFiles/arm11_34.dir/build.make CMakeFiles/arm11_34.dir/src/emulate.c.s
 .PHONY : src/emulate.c.s
 
+src/symbolTable.o: src/symbolTable.c.o
+
+.PHONY : src/symbolTable.o
+
+# target to build an object file
+src/symbolTable.c.o:
+	$(MAKE) -f CMakeFiles/arm11_34.dir/build.make CMakeFiles/arm11_34.dir/src/symbolTable.c.o
+.PHONY : src/symbolTable.c.o
+
+src/symbolTable.i: src/symbolTable.c.i
+
+.PHONY : src/symbolTable.i
+
+# target to preprocess a source file
+src/symbolTable.c.i:
+	$(MAKE) -f CMakeFiles/arm11_34.dir/build.make CMakeFiles/arm11_34.dir/src/symbolTable.c.i
+.PHONY : src/symbolTable.c.i
+
+src/symbolTable.s: src/symbolTable.c.s
+
+.PHONY : src/symbolTable.s
+
+# target to generate assembly for a file
+src/symbolTable.c.s:
+	$(MAKE) -f CMakeFiles/arm11_34.dir/build.make CMakeFiles/arm11_34.dir/src/symbolTable.c.s
+.PHONY : src/symbolTable.c.s
+
+src/utilities.o: src/utilities.c.o
+
+.PHONY : src/utilities.o
+
+# target to build an object file
+src/utilities.c.o:
+	$(MAKE) -f CMakeFiles/arm11_34.dir/build.make CMakeFiles/arm11_34.dir/src/utilities.c.o
+.PHONY : src/utilities.c.o
+
+src/utilities.i: src/utilities.c.i
+
+.PHONY : src/utilities.i
+
+# target to preprocess a source file
+src/utilities.c.i:
+	$(MAKE) -f CMakeFiles/arm11_34.dir/build.make CMakeFiles/arm11_34.dir/src/utilities.c.i
+.PHONY : src/utilities.c.i
+
+src/utilities.s: src/utilities.c.s
+
+.PHONY : src/utilities.s
+
+# target to generate assembly for a file
+src/utilities.c.s:
+	$(MAKE) -f CMakeFiles/arm11_34.dir/build.make CMakeFiles/arm11_34.dir/src/utilities.c.s
+.PHONY : src/utilities.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -192,6 +246,12 @@ help:
 	@echo "... src/emulate.o"
 	@echo "... src/emulate.i"
 	@echo "... src/emulate.s"
+	@echo "... src/symbolTable.o"
+	@echo "... src/symbolTable.i"
+	@echo "... src/symbolTable.s"
+	@echo "... src/utilities.o"
+	@echo "... src/utilities.i"
+	@echo "... src/utilities.s"
 .PHONY : help
 
 

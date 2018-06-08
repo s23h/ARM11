@@ -43,10 +43,10 @@ RM = /Applications/CLion.app/Contents/bin/cmake/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/prem/Documents/C_Project/arm11_34
+CMAKE_SOURCE_DIR = /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/prem/Documents/C_Project/arm11_34/cmake-build-debug
+CMAKE_BINARY_DIR = /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug
 
 # Include any dependencies generated for this target.
 include CMakeFiles/arm11_34.dir/depend.make
@@ -59,16 +59,16 @@ include CMakeFiles/arm11_34.dir/flags.make
 
 CMakeFiles/arm11_34.dir/src/assemble.c.o: CMakeFiles/arm11_34.dir/flags.make
 CMakeFiles/arm11_34.dir/src/assemble.c.o: ../src/assemble.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/arm11_34.dir/src/assemble.c.o"
-	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/arm11_34.dir/src/assemble.c.o   -c /Users/prem/Documents/C_Project/arm11_34/src/assemble.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/arm11_34.dir/src/assemble.c.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/arm11_34.dir/src/assemble.c.o   -c /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/assemble.c
 
 CMakeFiles/arm11_34.dir/src/assemble.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/arm11_34.dir/src/assemble.c.i"
-	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/prem/Documents/C_Project/arm11_34/src/assemble.c > CMakeFiles/arm11_34.dir/src/assemble.c.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/assemble.c > CMakeFiles/arm11_34.dir/src/assemble.c.i
 
 CMakeFiles/arm11_34.dir/src/assemble.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/arm11_34.dir/src/assemble.c.s"
-	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/prem/Documents/C_Project/arm11_34/src/assemble.c -o CMakeFiles/arm11_34.dir/src/assemble.c.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/assemble.c -o CMakeFiles/arm11_34.dir/src/assemble.c.s
 
 CMakeFiles/arm11_34.dir/src/assemble.c.o.requires:
 
@@ -83,16 +83,16 @@ CMakeFiles/arm11_34.dir/src/assemble.c.o.provides.build: CMakeFiles/arm11_34.dir
 
 CMakeFiles/arm11_34.dir/src/emulate.c.o: CMakeFiles/arm11_34.dir/flags.make
 CMakeFiles/arm11_34.dir/src/emulate.c.o: ../src/emulate.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/arm11_34.dir/src/emulate.c.o"
-	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/arm11_34.dir/src/emulate.c.o   -c /Users/prem/Documents/C_Project/arm11_34/src/emulate.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/arm11_34.dir/src/emulate.c.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/arm11_34.dir/src/emulate.c.o   -c /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/emulate.c
 
 CMakeFiles/arm11_34.dir/src/emulate.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/arm11_34.dir/src/emulate.c.i"
-	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/prem/Documents/C_Project/arm11_34/src/emulate.c > CMakeFiles/arm11_34.dir/src/emulate.c.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/emulate.c > CMakeFiles/arm11_34.dir/src/emulate.c.i
 
 CMakeFiles/arm11_34.dir/src/emulate.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/arm11_34.dir/src/emulate.c.s"
-	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/prem/Documents/C_Project/arm11_34/src/emulate.c -o CMakeFiles/arm11_34.dir/src/emulate.c.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/emulate.c -o CMakeFiles/arm11_34.dir/src/emulate.c.s
 
 CMakeFiles/arm11_34.dir/src/emulate.c.o.requires:
 
@@ -105,19 +105,71 @@ CMakeFiles/arm11_34.dir/src/emulate.c.o.provides: CMakeFiles/arm11_34.dir/src/em
 CMakeFiles/arm11_34.dir/src/emulate.c.o.provides.build: CMakeFiles/arm11_34.dir/src/emulate.c.o
 
 
+CMakeFiles/arm11_34.dir/src/symbolTable.c.o: CMakeFiles/arm11_34.dir/flags.make
+CMakeFiles/arm11_34.dir/src/symbolTable.c.o: ../src/symbolTable.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/arm11_34.dir/src/symbolTable.c.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/arm11_34.dir/src/symbolTable.c.o   -c /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/symbolTable.c
+
+CMakeFiles/arm11_34.dir/src/symbolTable.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/arm11_34.dir/src/symbolTable.c.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/symbolTable.c > CMakeFiles/arm11_34.dir/src/symbolTable.c.i
+
+CMakeFiles/arm11_34.dir/src/symbolTable.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/arm11_34.dir/src/symbolTable.c.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/symbolTable.c -o CMakeFiles/arm11_34.dir/src/symbolTable.c.s
+
+CMakeFiles/arm11_34.dir/src/symbolTable.c.o.requires:
+
+.PHONY : CMakeFiles/arm11_34.dir/src/symbolTable.c.o.requires
+
+CMakeFiles/arm11_34.dir/src/symbolTable.c.o.provides: CMakeFiles/arm11_34.dir/src/symbolTable.c.o.requires
+	$(MAKE) -f CMakeFiles/arm11_34.dir/build.make CMakeFiles/arm11_34.dir/src/symbolTable.c.o.provides.build
+.PHONY : CMakeFiles/arm11_34.dir/src/symbolTable.c.o.provides
+
+CMakeFiles/arm11_34.dir/src/symbolTable.c.o.provides.build: CMakeFiles/arm11_34.dir/src/symbolTable.c.o
+
+
+CMakeFiles/arm11_34.dir/src/utilities.c.o: CMakeFiles/arm11_34.dir/flags.make
+CMakeFiles/arm11_34.dir/src/utilities.c.o: ../src/utilities.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/arm11_34.dir/src/utilities.c.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/arm11_34.dir/src/utilities.c.o   -c /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/utilities.c
+
+CMakeFiles/arm11_34.dir/src/utilities.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/arm11_34.dir/src/utilities.c.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/utilities.c > CMakeFiles/arm11_34.dir/src/utilities.c.i
+
+CMakeFiles/arm11_34.dir/src/utilities.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/arm11_34.dir/src/utilities.c.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/utilities.c -o CMakeFiles/arm11_34.dir/src/utilities.c.s
+
+CMakeFiles/arm11_34.dir/src/utilities.c.o.requires:
+
+.PHONY : CMakeFiles/arm11_34.dir/src/utilities.c.o.requires
+
+CMakeFiles/arm11_34.dir/src/utilities.c.o.provides: CMakeFiles/arm11_34.dir/src/utilities.c.o.requires
+	$(MAKE) -f CMakeFiles/arm11_34.dir/build.make CMakeFiles/arm11_34.dir/src/utilities.c.o.provides.build
+.PHONY : CMakeFiles/arm11_34.dir/src/utilities.c.o.provides
+
+CMakeFiles/arm11_34.dir/src/utilities.c.o.provides.build: CMakeFiles/arm11_34.dir/src/utilities.c.o
+
+
 # Object files for target arm11_34
 arm11_34_OBJECTS = \
 "CMakeFiles/arm11_34.dir/src/assemble.c.o" \
-"CMakeFiles/arm11_34.dir/src/emulate.c.o"
+"CMakeFiles/arm11_34.dir/src/emulate.c.o" \
+"CMakeFiles/arm11_34.dir/src/symbolTable.c.o" \
+"CMakeFiles/arm11_34.dir/src/utilities.c.o"
 
 # External object files for target arm11_34
 arm11_34_EXTERNAL_OBJECTS =
 
 arm11_34: CMakeFiles/arm11_34.dir/src/assemble.c.o
 arm11_34: CMakeFiles/arm11_34.dir/src/emulate.c.o
+arm11_34: CMakeFiles/arm11_34.dir/src/symbolTable.c.o
+arm11_34: CMakeFiles/arm11_34.dir/src/utilities.c.o
 arm11_34: CMakeFiles/arm11_34.dir/build.make
 arm11_34: CMakeFiles/arm11_34.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C executable arm11_34"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking C executable arm11_34"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/arm11_34.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -127,6 +179,8 @@ CMakeFiles/arm11_34.dir/build: arm11_34
 
 CMakeFiles/arm11_34.dir/requires: CMakeFiles/arm11_34.dir/src/assemble.c.o.requires
 CMakeFiles/arm11_34.dir/requires: CMakeFiles/arm11_34.dir/src/emulate.c.o.requires
+CMakeFiles/arm11_34.dir/requires: CMakeFiles/arm11_34.dir/src/symbolTable.c.o.requires
+CMakeFiles/arm11_34.dir/requires: CMakeFiles/arm11_34.dir/src/utilities.c.o.requires
 
 .PHONY : CMakeFiles/arm11_34.dir/requires
 
@@ -135,6 +189,6 @@ CMakeFiles/arm11_34.dir/clean:
 .PHONY : CMakeFiles/arm11_34.dir/clean
 
 CMakeFiles/arm11_34.dir/depend:
-	cd /Users/prem/Documents/C_Project/arm11_34/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/prem/Documents/C_Project/arm11_34 /Users/prem/Documents/C_Project/arm11_34 /Users/prem/Documents/C_Project/arm11_34/cmake-build-debug /Users/prem/Documents/C_Project/arm11_34/cmake-build-debug /Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/CMakeFiles/arm11_34.dir/DependInfo.cmake --color=$(COLOR)
+	cd /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34 /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34 /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/CMakeFiles/arm11_34.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/arm11_34.dir/depend
 

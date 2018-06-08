@@ -1,4 +1,4 @@
-# Install script for directory: /Users/prem/Documents/C_Project/arm11_34
+# Install script for directory: /Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/prem/Documents/C_Project/arm11_34/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
