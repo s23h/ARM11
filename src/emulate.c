@@ -502,8 +502,8 @@ int main(int argc, char **argv) {
 
     printf("Registers:\n");
     for (int i = 0; i < 13; i++) {
-        printf("%d : ", i);
-        printf("%d %X\n", registers[i], registers[i]);
+        printf("$%d : ", i);
+        printf("%d   (%X)\n", registers[i], registers[i]);
     }
 
     printf("PC : %d %X\n", registers[15], registers[15]);
