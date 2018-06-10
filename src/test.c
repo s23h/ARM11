@@ -82,10 +82,20 @@ int32_t assembleDP(char** tokens) {
 
     operand2 = (int32_t)(strtol(tokens[op2Position] + 1, &ptr, base));
 
-    if (operand2 > 255) {
-        printf("Immediate constant cannot be represented using 8 bits!");
-        exit(EXIT_FAILURE);
+    int32_t numRotates = 0;
+
+    while ((operand2 > 255 || operand2 < 0) && numRotates < 30) {
+      operand2 = leftRotate(operand2, 2);
+      numRotates += 2;
     }
+
+    if (operand2 > 255) {
+      fprintf(stderr, "The immediate constant value cannot be represented.");
+      exit(EXIT_FAILURE);
+    }
+
+    int32_t mask = (numRotates / 2) << 8;
+    operand2 = operand2 | mask;
 
     int32_t instruction = -503316480;
 
@@ -96,7 +106,7 @@ int32_t assembleDP(char** tokens) {
     setBit32(&instruction, 25, iBit);
 
     // Set the opcode
-    int32_t mask = opcode << 21;
+    mask = opcode << 21;
     instruction = instruction | mask;
 
     // Set Rn

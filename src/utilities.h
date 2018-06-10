@@ -11,8 +11,11 @@ uint32_t extractBits(uint32_t number, int k, int p);
 // Same as above, but extracts the bits from a 64-bit number, instead of a 32-bit.
 uint32_t extractBitsFrom64(uint64_t number, int k, int p);
 
+// Rotates bits to the left by the specified amount.
+uint32_t leftRotate(uint32_t n, int d);
+
 // Rotates bits to the right by the specified amount.
-uint32_t rightRotate(uint32_t n, unsigned int d);
+uint32_t rightRotate(uint32_t n, int d);
 
 // Power function designed specifically for integers.
 uint32_t intPow(uint32_t x,int n);
@@ -27,4 +30,3 @@ void setBit8(uint8_t* rest, int pos, int val);
 uint32_t sign_extend_24_32(uint32_t x);
 
 #endif
-

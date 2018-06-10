@@ -13,9 +13,13 @@ uint32_t extractBitsFrom64(uint64_t number, int k, int p)
     return (((1 << k) - 1) & (number >> (p - 1)));
 }
 
+uint32_t leftRotate(uint32_t n, int d) {
+  return (n << d) | (n >> (32 - d)) & ~(-1 << d);
+}
+
 // Rotates bits to the right by the specified amount.
-uint32_t rightRotate(uint32_t n, unsigned int d) {
-   return (n >> d)|(n << (32 - d));
+uint32_t rightRotate(uint32_t n, int d) {
+   return (n >> d)| (n << (32 - d));
 }
 
 // Power function designed specifically for integers.
