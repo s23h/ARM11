@@ -1,164 +1,51 @@
-#include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
-#include <stdint.h>
 #include "symbolTable.h"
+#include <stdlib.h>
+#include <string.h>
+#include "utilities.h"
 
-#define MAXC 511
-#define MAXL 10
-
-// The maximum possible number of tokens in a line.
 #define MAX_TOKENS 6
+#define MAXC 511
 
-char*** tokenise(const char* fileName);
-char** breakDown(char *line, const char *delim);
+typedef enum { DATA_PROCESSING, MULTIPLY, DATA_TRANSFER, BRANCH, LABEL, SPECIAL } instructionType;
 
-int main(int argc, char **argv) {
-  char *** strings = tokenise(argv[1]);
-  for (int i=0; i< sizeof(strings); i++) {
-    for (int j=0; j< sizeof(strings[i]); j++) {
-      printf("%s", strings[i][j]);
-    }
-  }
+static symbolTable opcodes;
 
-  return EXIT_SUCCESS;
-}
+// Records the number of data items written to the end of the assembled instruction file by ldr/str.
+static int numDataWrites = 0;
 
-void writeToFile(const char* sourceName, const char* destName) {
-    FILE* sourceFile = fopen(sourceName, "rb");
-    if (sourceFile == NULL) {
-        perror("Error opening the source binary file!");
-        exit(EXIT_FAILURE);
+// Breaks down a line into its constituent tokens -- e.g. mov r1, r2 would be turned into an string array containing
+// mov, r1, r2 as its elements
+char** tokenize(char* line, int* numTokens) {
+    char delim[] = " ,:\n";
+    char** tokenArray = malloc(MAX_TOKENS * sizeof(char*));
+    for (int i = 0; i < MAX_TOKENS; i++) {
+        tokenArray[i] = NULL;
     }
 
-    FILE* destFile = fopen(destName, "wb");
-    if (destFile == NULL) {
-        perror("Error opening the destination binary file!");
-        exit(EXIT_FAILURE);
+    char *token;
+
+    int i = 0;
+    token = strtok(line, delim);
+
+    while (token != NULL) {
+        tokenArray[i] = token;
+        i++;
+        token = strtok(NULL, delim);
     }
+    *numTokens = i;
 
-    char c = fgetc(sourceFile);
-    while (c != EOF) {
-        fputc(c, destFile);
-        c = fgetc(sourceFile);
-    }
-
-    fclose(sourceFile);
-    fclose(destFile);
-}
-
-char*** tokenise(const char* fileName)
-{
-    char*** tokens; //[MAXL][][] = NULL;
-    char** temp;//[1][MAXC] = NULL; /* pointer to array of type char [MAXC] */
-    int i, n = 0;
-    FILE *file = fopen(fileName, "rb");
-
-    if (file == NULL) {  /* valdiate file open for reading */
-        perror("Error opening the source binary file!\n");
-        exit(EXIT_FAILURE);
-    }
-
-    if (!(tokens = malloc (MAXL * sizeof *tokens))) { /* allocate MAXL arrays */
-        perror("Error: virtual memory exhausted 'tokens'!\n");
-        exit(EXIT_FAILURE);
-    }
-
-    while (n < MAXL && fgets (temp[0], MAXC, file)) { /* read each line */
-        char** lineOfTokens = breakDown(temp[0], ", ");
-        tokens[n] = lineOfTokens;
-
-        char **p = tokens[n];                  /* assign pointer */
-        for (; **p && **p != '\n'; p++) {
-        }                                    /* find 1st '\n'  */
-        *p = 0;
-        n++;                                 /* nul-terminate  */
-    }
-
-    if (file != stdin) {
-        fclose(file);
-    }
-
-    free(tokens);
-
-}
-
-// Breaks down a line into its constituents tokens -- e.g. mov r1, r2 becomes a string array containing
-// mov, r1, r2
-char** tokenize(char *line, char* delim) {
-    char **array = malloc(sizeof(char *));
-    if (array) {
-        size_t n = 1;
-        char *token = strtok(line, delim);
-        while (token) {
-            char **tmp = realloc(array, (n + 1) * sizeof(char *));
-            if (tmp == NULL) {
-                break;
-            }
-            array = tmp;
-            ++n;
-            array[n - 2] = malloc(strlen(token) + 1);
-            if (array[n - 2] != NULL) {
-                strcpy(array[n - 2], token);
-            }
-            token = strtok(NULL, delim);
-        }
-        array[n - 1] = NULL;
-    }
-    return array;
-}
-
-typedef enum { DATA_PROCESSING, MULTIPLY, DATA_TRANSFER, BRANCH } instructionType;
-
-typedef struct {
-    instructionType type;
-    uint8_t cond;
-    uint8_t i;
-    uint8_t opcode;
-    uint8_t s;
-    uint8_t rn;
-    uint8_t rd;
-    uint16_t operand2;
-    uint8_t a;
-    uint8_t rs;
-    uint8_t rm;
-    uint8_t p;
-    uint8_t u;
-    uint8_t l;
-    uint8_t rest;
-    uint32_t offset;
-} decodedInstruction;
-
-static int is_label(char *instruction) {
-  return instruction[strlen(instruction) - 1] == ':';
-}
-
-void remove_colon(char *str) {
-  //replaces ':' with EOF
-//  str[length - 1] = '\0';
-}
-
-void parseArgumentsDP(decodedInstruction d, char** line) {
-  d.rd = (int) strtol(line[1]++, (char **)NULL, 10);
-  d.rn = (int) strtol(line[2]++, (char **)NULL, 10);
-  if (line[3][0] == '#'){
-    d.i = 1;
-    int base = (line[3][1] == '0' && line[3][1] == 'x') ? 16 : 10;
-    d.operand2 = (int) strtol(line[1]++, (char **)NULL, base);
-  } else {
-    d.i = 0;
-    d.operand2 = (int) strtol(line[3]++, (char **)NULL, 10);
-  }
+    return tokenArray;
 }
 
 // Returns a 32-bit value representing the machine code instruction corresponding to the specified
 // Data Processing instruction, represented in token form
 int32_t assembleDP(char** tokens) {
-    uint32_t opcode = tableLookup(&opcodes, tokens[0]);
+    int32_t opcode = tableLookup(&opcodes, tokens[0]);
 
-    uint8_t rd = 0;
-    uint8_t rn = 0;
-    uint32_t operand2 = 0;
+    int32_t rd = 0;
+    int32_t rn = 0;
+    int32_t operand2 = 0;
     int s = 0;
 
     int op2Position = 0;
@@ -172,37 +59,58 @@ int32_t assembleDP(char** tokens) {
             op2Position = 2;
             s = 1;
             rd = 0;
-            rn = (uint8_t)(strtol(tokens[1] + 1, &ptr, 10)); break;
+            rn = (int32_t)(strtol(tokens[1] + 1, &ptr, 10)); break;
         case 13:
             op2Position = 2;
             s = 0;
-            rd = (uint8_t)(strtol(tokens[1] + 1, &ptr, 10));
+            rd = (int32_t)(strtol(tokens[1] + 1, &ptr, 10));
             rn = 0; break;
         default:
             op2Position = 3;
             s = 0;
-            rd = (uint8_t)(strtol(tokens[1] + 1, &ptr, 10));
-            rn = (uint8_t)(strtol(tokens[2] + 1, &ptr, 10)); break;
+            rd = (int32_t)(strtol(tokens[1] + 1, &ptr, 10));
+            rn = (int32_t)(strtol(tokens[2] + 1, &ptr, 10)); break;
     }
 
     if (tokens[op2Position][1] == '0' && tokens[op2Position][2] == 'x') {
         base = 16;
     }
 
-    operand2 = (uint32_t)(strtol(tokens[op2Position] + 1, &ptr, base));
+    int iBit = 0;
+    if (tokens[op2Position][0] == 'r') {
+      iBit = 0;
+    }
+    else if (tokens[op2Position][0] == '#') {
+      iBit = 1;
+    }
+
+    operand2 = (int32_t)(strtol(tokens[op2Position] + 1, &ptr, base));
+
+    int32_t numRotates = 0;
+
+    while ((operand2 > 255 || operand2 < 0) && numRotates < 30) {
+      operand2 = leftRotate(operand2, 2);
+      numRotates += 2;
+    }
 
     if (operand2 > 255) {
-        printf("Immediate constant cannot be represented using 8 bits!");
-        exit(EXIT_FAILURE);
+      fprintf(stderr, "The immediate constant value cannot be represented.");
+      exit(EXIT_FAILURE);
     }
+
+    int32_t mask = (numRotates / 2) << 8;
+    operand2 = operand2 | mask;
 
     int32_t instruction = -503316480;
 
     // Set the S bit
     setBit32(&instruction, 20, s);
 
+    // Set the I bit
+    setBit32(&instruction, 25, iBit);
+
     // Set the opcode
-    int32_t mask = opcode << 21;
+    mask = opcode << 21;
     instruction = instruction | mask;
 
     // Set Rn
@@ -231,13 +139,13 @@ int32_t assembleMult(char** tokens) {
     char* ptr;
 
     // Sets the register values
-    uint8_t rd = (uint8_t)(strtol(tokens[1] + 1, &ptr, 10));
-    uint8_t rm = (uint8_t)(strtol(tokens[2] + 1, &ptr, 10));
-    uint8_t rs = (uint8_t)(strtol(tokens[3] + 1, &ptr, 10));
+    int32_t rd = (int32_t)(strtol(tokens[1] + 1, &ptr, 10));
+    int32_t rm = (int32_t)(strtol(tokens[2] + 1, &ptr, 10));
+    int32_t rs = (int32_t)(strtol(tokens[3] + 1, &ptr, 10));
 
-    uint8_t rn = 0;
+    int32_t rn = 0;
     if (a) {
-        rn = (uint8_t)(strtol(tokens[4] + 1, &ptr, 10));
+        rn = (int32_t)(strtol(tokens[4] + 1, &ptr, 10));
     }
 
     int32_t instruction = -536870768;
@@ -258,83 +166,289 @@ int32_t assembleMult(char** tokens) {
     return instruction;
 }
 
-decodedInstruction* readTokens(char*** tokens) {
-  decodedInstruction* instructions = malloc(sizeof(tokens)*sizeof(decodedInstruction));
-  uint32_t address = 0;
-  for (int i=0; i<sizeof(tokens); i++) {
-    address += 4;
-      if (is_label(tokens[i][0])) {
-        remove_colon(tokens[i][0]); // TODO: WHAT TO DO IF ITS A LABEL!
-      } else {
-        decodedInstruction d;
-        d.s = 0;
-        d.cond = 14;
+int32_t assembleBranch(char** tokens, int32_t currentAddress, symbolTable* labelsMap) {
+    int32_t cond = 0;
+    cond = tableLookup(&opcodes, tokens[0]);
 
-        if (!strcmp(tokens[i][0], "mov")) {
-          d.type = DATA_PROCESSING;
-          d.opcode = 13;
-          d.rd = (int) strtol(tokens[i][1]++, (char **)NULL, 10);
-          if (tokens[i][2][0] == '#'){
-            d.i = 1;
-            int base = (tokens[i][3][1] == '0' && tokens[i][3][1] == 'x') ? 16 : 10;
-            d.operand2 = (int) strtol(tokens[i][1]++, (char **)NULL, base);
-          } else {
-            d.i = 0;
-            d.operand2 = (int) strtol(tokens[i][3]++, (char **)NULL, 10);
-          }
-        }
+    int32_t offset = tableLookup(labelsMap, tokens[1]) - currentAddress;
+    offset -= 8; // takes into account of the 8 byte pipeline effect
 
-        if (!strcmp(tokens[i][0], "and")) {
-          d.type = DATA_PROCESSING;
-          d.opcode = 0;
-        }
-        if (!strcmp(tokens[i][0], "eor")) {
-          d.type = DATA_PROCESSING;
-          d.opcode = 1;
-        }
-        if (!strcmp(tokens[i][0], "sub")) {
-          d.type = DATA_PROCESSING;
-          d.opcode = 2;
-        }
-        if (!strcmp(tokens[i][0], "rsb")) {
-          d.type = DATA_PROCESSING;
-          d.opcode = 3;
-        }
-        if (!strcmp(tokens[i][0], "add")) {
-          d.type = DATA_PROCESSING;
-          d.opcode = 4;
-        }
-        if (!strcmp(tokens[i][0], "oor")) {
-          d.type = DATA_PROCESSING;
-          d.opcode = 12;
-        }
-        if (!strcmp(tokens[i][0], "tst")) {
-          d.type = DATA_PROCESSING;
-          d.opcode = 8;
-          d.s = 1;
+    int32_t offset_26_bit = 0;
+    if (offset < 0) {
+        setBit32(&offset_26_bit, 25, 1);
+        int32_t mask = ((int32_t)intPow(2, 25)) + offset;
+        offset_26_bit = offset_26_bit | mask;
+    }
+    else {
+        offset_26_bit = offset;
+    }
+
+    int32_t offset_24_bit = extractBits(offset_26_bit >> 2, 24, 1);
+
+    int32_t instruction = 167772160;
+    int32_t mask = cond << 28;
+    instruction = instruction | mask;
+
+    mask = offset_24_bit;
+    instruction = instruction | mask;
+
+    return instruction;
+}
+
+// Assembles Single Data Transfer instructions, returns 32-bit machine code instruction.
+int32_t assembleDT(char** tokens, int32_t currentAddress, FILE* input, FILE* output, int numTokens, int32_t endAddress) {
+    int L = 0;
+    if (strcmp(tokens[0], "ldr") == 0) {
+        L = 1;
+    }
+
+    char* ptr;
+    int32_t rd = (int32_t)(strtol(tokens[1] + 1, &ptr, 10));
+    int32_t rn = 0;
+    int U = 1;
+    int P = 1;
+    int I = 0;
+
+    int32_t offset = 0;
+
+    // Numeric constant
+    if (tokens[2][0] == '=') {
+        int32_t num = (int32_t)(strtol(tokens[2] + 1, &ptr, 16));
+        if (num <= 255) {
+            tokens[0] = "mov";
+            tokens[2][0] = '#';
+            return assembleDP(tokens);
         }
 
-        if (!strcmp(tokens[i][0], "teq")) {
-          d.type = DATA_PROCESSING;
-          d.opcode = 9;
-          d.s = 1;
+        unsigned long inputPos = ftell(input);
+        unsigned long outputPos = ftell(output);
+
+        fseek(input, inputPos, SEEK_SET);
+
+        offset = endAddress + numDataWrites * 4 - currentAddress;
+
+        // Writes the =expression in 4 bytes at the end of the assembled program. We have to first fill up the file with zeroes, so that the expression
+        // is written to the file at the right address.
+        if (numDataWrites == 0) {
+          int32_t* zeroes = calloc(4, offset / 4);
+          fwrite(zeroes, 4, offset / 4, output);
+          free(zeroes);
         }
 
-        if (!strcmp(tokens[i][0], "cmp")) {
-          d.type = DATA_PROCESSING;
-          d.opcode = 10;
-          d.s = 1;
-        }
+        fseek(output, 0, SEEK_END);
+        fwrite(&num, 4, 1, output);
+        numDataWrites++;
+        fseek(output, outputPos, SEEK_SET);
 
-        if (d.type == DATA_PROCESSING) {
-          parseArgumentsDP(d, tokens[i]);
-          instructions[i] = d;
+        offset -= 8; // takes into account of the 8 byte pipeline effect
 
-        }
-
-
-
-
+        rn = 15;
+    }
+    // Register case
+    else {
+      if (numTokens == 3) {
+        rn = (int32_t)(strtol(tokens[2] + 2, &ptr, 10));
+        offset = 0;
       }
+      else {
+        if (tokens[2][strlen(tokens[2]) - 1] == ']') {
+          P = 0;
+        }
+
+        rn = (int32_t)(strtol(tokens[2] + 2, &ptr, 10));
+        int base = 10;
+        if (strlen(tokens[3]) >= 4 && tokens[3][2] == 'x') {
+          base = 16;
+        }
+        if (strlen(tokens[3]) >= 5 && tokens[3][3] == 'x') {
+          base = 16;
+        }
+        offset = (int32_t)(strtol(tokens[3] + 1, &ptr, base));
+        if (offset < 0) {
+          offset = -1 * offset;
+          U = 0;
+        }
+      }
+    }
+
+    int32_t instruction = -469762048;
+    setBit32(&instruction, 25, I);
+    setBit32(&instruction, 24, P);
+    setBit32(&instruction, 23, U);
+    setBit32(&instruction, 20, L);
+
+    int32_t mask = rn << 16;
+    instruction = instruction | mask;
+
+    mask = rd << 12;
+    instruction = instruction | mask;
+
+    instruction = instruction | offset;
+
+    return instruction;
+}
+
+int32_t assembleSpecial(char** tokens) {
+  if (strcmp(tokens[0], "andeq") == 0) {
+    return 0;
   }
+  else {
+    char* ptr;
+    int32_t rd = (int32_t)(strtol(tokens[1] + 1, &ptr, 10));
+    int32_t operand2 = rd;
+    int base = 10;
+    if (tokens[2][2] == 'x') {
+      base = 16;
+    }
+    int32_t shiftVal = (int32_t)(strtol(tokens[2] + 1, &ptr, base));
+    int32_t mask = shiftVal << 7;
+    operand2 = operand2 | mask;
+
+    int32_t instruction = 3785359360;
+    instruction = instruction | operand2;
+    mask = rd << 12;
+    instruction = instruction | mask;
+    return instruction;
+  }
+}
+
+// Determines the instruction type from the list of tokens provided.
+instructionType getInstructionType(char** tokens) {
+    if ((strcmp(tokens[0], "add") == 0) || (strcmp(tokens[0], "sub") == 0) || (strcmp(tokens[0], "rsb") == 0)
+        || (strcmp(tokens[0], "and") == 0) || (strcmp(tokens[0], "eor") == 0) || (strcmp(tokens[0], "orr") == 0)
+        || (strcmp(tokens[0], "mov") == 0) || (strcmp(tokens[0], "tst") == 0) || (strcmp(tokens[0], "teq") == 0)
+        || (strcmp(tokens[0], "cmp") == 0)) {
+        return DATA_PROCESSING;
+    }
+
+    if ((strcmp(tokens[0], "mul") == 0) || (strcmp(tokens[0], "mla") == 0)) {
+        return MULTIPLY;
+    }
+
+    if ((strcmp(tokens[0], "ldr") == 0) || (strcmp(tokens[0], "str") == 0)) {
+        return DATA_TRANSFER;
+    }
+
+    if ((strcmp(tokens[0], "beq") == 0) || (strcmp(tokens[0], "bne") == 0) || (strcmp(tokens[0], "bge") == 0) ||
+        (strcmp(tokens[0], "blt") == 0) || (strcmp(tokens[0], "bgt") == 0) || (strcmp(tokens[0], "ble") == 0) ||
+        (strcmp(tokens[0], "b") == 0) || strcmp(tokens[0], "bal") == 0) {
+        return BRANCH;
+    }
+
+    if ((strcmp(tokens[0], "lsl") == 0) || (strcmp(tokens[0], "andeq") == 0)) {
+        return SPECIAL;
+    }
+
+    return LABEL;
+}
+
+int main(int argc, char** argv) {
+    initTable(&opcodes);
+
+    insertBack(&opcodes, "and", 0);
+    insertBack(&opcodes, "eor", 1);
+    insertBack(&opcodes, "sub", 2);
+    insertBack(&opcodes, "rsb", 3);
+    insertBack(&opcodes, "add", 4);
+    insertBack(&opcodes, "orr", 12);
+    insertBack(&opcodes, "mov", 13);
+    insertBack(&opcodes, "tst", 8);
+    insertBack(&opcodes, "teq", 9);
+    insertBack(&opcodes, "cmp", 10);
+
+    insertBack(&opcodes, "beq", 0);
+    insertBack(&opcodes, "bne", 1);
+    insertBack(&opcodes, "bge", 10);
+    insertBack(&opcodes, "blt", 11);
+    insertBack(&opcodes, "bgt", 12);
+    insertBack(&opcodes, "ble", 13);
+    insertBack(&opcodes, "bal", 14);
+    insertBack(&opcodes, "b", 14);
+
+    /*
+    for (tableIter iter = tableBegin(&opcodes); iter != tableEnd(&opcodes); iter = iter -> next) {
+        printf("%u\n", tableLookup(&opcodes, iter -> key));
+    }*/
+
+    /*char instruction[] = "mul r1, r12, r3";
+    int32_t ins = assembleMult(tokenize(instruction));
+    printf("%d", ins); */
+
+    symbolTable labelsAddresses;
+    initTable(&labelsAddresses);
+
+    // The first pass over the source file that builds up the symbol table.
+    FILE *firstPass = fopen(argv[1], "r");
+    int32_t addressCounter = 0;
+    if (firstPass != NULL)
+    {
+        char line[MAXC + 1]; // +1 for the null character at the end
+        while (fgets(line, sizeof(line), firstPass) != NULL) /* read a line */
+        {
+            if (line[0] == '\n') {
+              continue;
+            }
+            int temp;
+            char** tokens = tokenize(line, &temp);
+            if (getInstructionType(tokens) == LABEL) {
+                insertBack(&labelsAddresses, tokens[0], addressCounter);
+            }
+            else {
+                addressCounter += 4;
+            }
+
+        }
+        fclose(firstPass);
+    }
+    else
+    {
+        perror(""); /* why didn't the file open? */
+    }
+    int32_t endAddress = addressCounter;
+
+    /*
+    for (tableIter iter = tableBegin(&labelsAddresses); iter != tableEnd(&labelsAddresses); iter = iter -> next) {
+        printf("%s %u\n", iter -> key, tableLookup(&labelsAddresses, iter -> key));
+    }*/
+
+    // The second pass over the source file, outputs the binary instructions.
+    FILE *input = fopen(argv[1], "r");
+    FILE *output = fopen(argv[2], "wb");
+
+    if (input != NULL && output != NULL)
+    {
+        addressCounter = 0;
+        char line[MAXC + 1]; // +1 for the null character at the end
+        while (fgets(line, sizeof(line), input) != NULL)
+        {
+            if (line[0] == '\n') {
+              continue;
+            }
+            int numTokens = 0;
+            char** tokens = tokenize(line, &numTokens);
+            instructionType type = getInstructionType(tokens);
+            if (type == LABEL) {
+                continue;
+            }
+            int32_t instruction = 0;
+            switch (type) {
+                case DATA_PROCESSING: instruction = assembleDP(tokens); break;
+                case MULTIPLY: instruction = assembleMult(tokens); break;
+                case BRANCH: instruction = assembleBranch(tokens, addressCounter, &labelsAddresses); break;
+                case DATA_TRANSFER: instruction = assembleDT(tokens, addressCounter, input, output, numTokens, endAddress); break;
+                case SPECIAL: instruction = assembleSpecial(tokens); break;
+            }
+            fwrite(&instruction, sizeof(int32_t), 1, output);
+            addressCounter += 4;
+        }
+        fclose(input);
+        fclose(output);
+    }
+    else
+    {
+        perror("");
+    }
+
+    destroyTable(&labelsAddresses);
+    destroyTable(&opcodes);
 }
