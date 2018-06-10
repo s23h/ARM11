@@ -72,6 +72,14 @@ int32_t assembleDP(char** tokens) {
         base = 16;
     }
 
+    int iBit = 0;
+    if (tokens[op2Position][0] == 'r') {
+      iBit = 0;
+    }
+    else if (tokens[op2Position][0] == '#') {
+      iBit = 1;
+    }
+
     operand2 = (int32_t)(strtol(tokens[op2Position] + 1, &ptr, base));
 
     if (operand2 > 255) {
@@ -83,6 +91,9 @@ int32_t assembleDP(char** tokens) {
 
     // Set the S bit
     setBit32(&instruction, 20, s);
+
+    // Set the I bit
+    setBit32(&instruction, 25, iBit);
 
     // Set the opcode
     int32_t mask = opcode << 21;
@@ -141,10 +152,9 @@ int32_t assembleMult(char** tokens) {
     return instruction;
 }
 
-
 int32_t assembleBranch(char** tokens, int32_t currentAddress, symbolTable* labelsMap) {
     int32_t cond = 0;
-    cond = tableLookup(&opcodes, tokens[0]);;
+    cond = tableLookup(&opcodes, tokens[0]);
 
     int32_t offset = tableLookup(labelsMap, tokens[1]) - currentAddress;
     offset -= 8; // takes into account of the 8 byte pipeline effect
@@ -152,7 +162,7 @@ int32_t assembleBranch(char** tokens, int32_t currentAddress, symbolTable* label
     int32_t offset_26_bit = 0;
     if (offset < 0) {
         setBit32(&offset_26_bit, 25, 1);
-        int32_t mask = intPow(2, 25) + offset;
+        int32_t mask = ((int32_t)intPow(2, 25)) + offset;
         offset_26_bit = offset_26_bit | mask;
     }
     else {
@@ -165,8 +175,79 @@ int32_t assembleBranch(char** tokens, int32_t currentAddress, symbolTable* label
     int32_t mask = cond << 28;
     instruction = instruction | mask;
 
-    mask = offset;
+    mask = offset_24_bit;
     instruction = instruction | mask;
+
+    return instruction;
+}
+
+// Assembles Single Data Transfer instructions, returns 32-bit machine code instruction.
+int32_t assembleDT(char** tokens, int32_t currentAddress, FILE* input, FILE* output) {
+    int L = 0;
+    if (strcmp(tokens[0], "ldr")) {
+        L = 1;
+    }
+
+    char* ptr;
+    int32_t rd = (int32_t)(strtol(tokens[1] + 1, &ptr, 10));
+    int32_t rn = 0;
+    int U = 1;
+    int P = 1;
+    int I = 0;
+
+    int32_t offset = 0;
+
+    // Numeric constant
+    if (tokens[2][0] == '=') {
+        int32_t num = (int32_t)(strtol(tokens[2] + 1, &ptr, 16));
+        if (num <= 255) {
+            tokens[0] = "mov";
+            tokens[2][0] = '#';
+            return assembleDP(tokens);
+        }
+
+        unsigned long inputPos = ftell(input);
+        unsigned long outputPos = ftell(output);
+
+        // Works out the address at the end of the assembled program by going through line by line.
+        int32_t addressCounter = currentAddress + 4;
+
+        char line[MAXC + 1]; // +1 for the null character at the end
+        while (fgets(line, sizeof(line), input) != NULL)
+        {
+            addressCounter += 4;
+        }
+
+        fseek(input, inputPos, SEEK_SET);
+
+        offset = addressCounter - currentAddress;
+
+        // Writes the =expression in 4 bytes at the end of the assembled program. We have to first fill up the file with zeroes, so that the expression
+        // is written to the file at the right address.
+        int32_t* zeroes = calloc(4, offset);
+        fwrite(zeroes, 4, offset, output);
+        fwrite(&num, 4, 1, output);
+        free(zeroes);
+        fseek(output, outputPos, SEEK_SET);
+
+        offset -= 8; // takes into account of the 8 byte pipeline effect
+
+        rn = 15;
+    }
+
+    int32_t instruction = -469762048;
+    setBit32(&instruction, 25, I);
+    setBit32(&instruction, 24, P);
+    setBit32(&instruction, 23, U);
+    setBit32(&instruction, 20, L);
+
+    int32_t mask = rn << 16;
+    instruction = instruction | mask;
+
+    mask = rd << 12;
+    instruction = instruction | mask;
+
+    instruction = instruction | offset;
 
     return instruction;
 }
@@ -244,6 +325,9 @@ int main(int argc, char** argv) {
         char line[MAXC + 1]; // +1 for the null character at the end
         while (fgets(line, sizeof(line), firstPass) != NULL) /* read a line */
         {
+            if (line[0] == '\n') {
+              continue;
+            }
             char** tokens = tokenize(line);
             if (getInstructionType(tokens) == LABEL) {
                 insertBack(&labelsAddresses, tokens[0], addressCounter);
@@ -275,7 +359,11 @@ int main(int argc, char** argv) {
         char line[MAXC + 1]; // +1 for the null character at the end
         while (fgets(line, sizeof(line), input) != NULL)
         {
+            if (line[0] == '\n') {
+              continue;
+            }
             char** tokens = tokenize(line);
+            printf("%s\n", tokens[0]);
             instructionType type = getInstructionType(tokens);
             if (type == LABEL) {
                 continue;
@@ -283,8 +371,9 @@ int main(int argc, char** argv) {
             int32_t instruction = 0;
             switch (type) {
                 case DATA_PROCESSING: instruction = assembleDP(tokens); break;
-                case MULTIPLY: instruction = assembleMult(tokens);
-                case BRANCH: instruction = assembleBranch(tokens, addressCounter, &labelsAddresses);
+                case MULTIPLY: instruction = assembleMult(tokens); break;
+                case BRANCH: instruction = assembleBranch(tokens, addressCounter, &labelsAddresses); break;
+                case DATA_TRANSFER: instruction = assembleDT(tokens, addressCounter, input, output); break;
             }
             fwrite(&instruction, sizeof(int32_t), 1, output);
             addressCounter += 4;

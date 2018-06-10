@@ -43,10 +43,11 @@ tableIter tableEnd(symbolTable *t) {
 }
 
 // Inserts a new pair before the current iterator.
-void tableInsert(symbolTable* t, tableIter iter, char* key, uint32_t value) {
+void tableInsert(symbolTable* t, tableIter iter, char* key, int32_t value) {
     pair* newPair = allocatePair();
     newPair -> value = value;
-    newPair -> key = key;
+    newPair -> key = malloc((strlen(key) + 1) * sizeof(char));
+    strcpy(newPair -> key, key);
 
     newPair -> prev = iter -> prev;
     newPair -> next = iter;
@@ -56,12 +57,12 @@ void tableInsert(symbolTable* t, tableIter iter, char* key, uint32_t value) {
 }
 
 // Inserts a new pair at the front of the list.
-void insertFront(symbolTable* t, char* key, uint32_t value) {
+void insertFront(symbolTable* t, char* key, int32_t value) {
     tableInsert(t, tableBegin(t), key, value);
 }
 
 // Inserts a new pair at the back of the list.
-void insertBack(symbolTable* t, char* key, uint32_t value) {
+void insertBack(symbolTable* t, char* key, int32_t value) {
     tableInsert(t, tableEnd(t), key, value);
 }
 
@@ -75,7 +76,7 @@ void destroyTable(symbolTable* t) {
 }
 
 // Looks up the value for the given symbol, assumes that all keys being looked up are present in the table.
-uint32_t tableLookup(symbolTable* t, char* key) {
+int32_t tableLookup(symbolTable* t, char* key) {
     for (tableIter iter = tableBegin(t); iter != tableEnd(t); iter = iter -> next) {
         if (strcmp(iter -> key, key) == 0) {
             return iter -> value;

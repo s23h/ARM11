@@ -38,17 +38,17 @@ tableIter tableBegin(symbolTable* t);
 tableIter tableEnd(symbolTable *t);
 
 // Inserts a new pair before the current iterator.
-void tableInsert(symbolTable* t, tableIter iter, char* key, uint32_t value);
+void tableInsert(symbolTable* t, tableIter iter, char* key, int32_t value);
 
 // Inserts a new pair at the front of the list.
-void insertFront(symbolTable* t, char* key, uint32_t value);
+void insertFront(symbolTable* t, char* key, int32_t value);
 
 // Inserts a new pair at the back of the list.
-void insertBack(symbolTable* t, char* key, uint32_t value);
+void insertBack(symbolTable* t, char* key, int32_t value);
 
 void destroyTable(symbolTable* t);
 
-uint32_t tableLookup(symbolTable* t, char* key);
+int32_t tableLookup(symbolTable* t, char* key);
 
 #endif
 
