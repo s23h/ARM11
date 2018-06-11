@@ -434,7 +434,39 @@ void executeDT(decodedInstruction decoded, int32_t* registers, uint8_t* mainMemo
         }
     }
 
-    if (addressToEffect >= RAM_SIZE) {
+    if (decoded.l) {
+      switch (addressToEffect) {
+        case 0x20200000:
+        case 0x20200004:
+        case 0x20200008:
+        case 0x20200028:
+        case 0x2020001c: registers[decoded.rd] = addressToEffect; break;
+        default: break;
+      }
+    }
+
+
+    if (addressToEffect == 0x20200000) {
+      printf("One GPIO pin from 0 to 9 has been accessed\n");
+      return;
+    }
+    else if (addressToEffect == 0x20200004) {
+      printf("One GPIO pin from 10 to 19 has been accessed\n");
+      return;
+    }
+    else if (addressToEffect == 0x20200008) {
+      printf("One GPIO pin from 20 to 29 has been accessed\n");
+      return;
+    }
+    else if (addressToEffect == 0x20200028) {
+      printf("PIN OFF\n");
+      return;
+    }
+    else if (addressToEffect == 0x2020001c) {
+      printf("PIN ON\n");
+      return;
+    }
+    else if (addressToEffect >= RAM_SIZE) {
       printf("Error: Out of bounds memory access at address 0x%08x\n", addressToEffect);
       return;
     }
