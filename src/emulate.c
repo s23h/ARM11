@@ -5,6 +5,8 @@
 
 #include "utilities.h"
 
+#define RAM_SIZE 65536
+
 // Loads the provided file into main memory, and returns the size of the file.
 int loadFile(uint8_t* memory, const char* fileName) {
     FILE* binaryFile = fopen(fileName, "rb");
@@ -415,7 +417,7 @@ void executeDT(decodedInstruction decoded, int32_t* registers, uint8_t* mainMemo
     }
 
     // Calculates the address to read/load from
-    uint32_t addressToEffect;
+    int32_t addressToEffect;
     if (decoded.p && decoded.u) {
         addressToEffect = registers[decoded.rn] + offset;
     }
@@ -432,6 +434,11 @@ void executeDT(decodedInstruction decoded, int32_t* registers, uint8_t* mainMemo
         }
     }
 
+    if (addressToEffect >= RAM_SIZE) {
+      printf("Error: Out of bounds memory access at address 0x%08x\n", addressToEffect);
+      return;
+    }
+
     // Read/load from memory
     if (decoded.l) {
         registers[decoded.rd] = ((int32_t*)(&(mainMemory[addressToEffect])))[0];
@@ -444,8 +451,8 @@ void executeDT(decodedInstruction decoded, int32_t* registers, uint8_t* mainMemo
 
 int main(int argc, char **argv) {
     // The main memory of the Raspberry Pi
-    uint8_t* mainMemory = malloc(65536);
-    memset(mainMemory, 0, 65536);
+    uint8_t* mainMemory = malloc(RAM_SIZE);
+    memset(mainMemory, 0, RAM_SIZE);
 
     // Reading the binary code into main memory
     int size = loadFile(mainMemory, argv[1]);
@@ -456,7 +463,7 @@ int main(int argc, char **argv) {
 
     // The three stage pipeline
     decodedInstruction decoded;
-    uint32_t fetched;
+    int32_t fetched;
 
     int decodeAvailable = 0;
     int fetchAvailable = 0;
@@ -495,28 +502,27 @@ int main(int argc, char **argv) {
                 }
             }
         }
-        fetched = ((uint32_t*)(&mainMemory[registers[15]]))[0];
+        fetched = ((int32_t*)(&mainMemory[registers[15]]))[0];
         fetchAvailable = 1;
         registers[15] += 4;
     }
 
     printf("Registers:\n");
     for (int i = 0; i < 13; i++) {
-        printf("$%d : ", i);
-        printf("%d   (%X)\n", registers[i], registers[i]);
+        printf("$%d\t:\t", i);
+        printf("%d\t(0x%08x)\n", registers[i], registers[i]);
     }
 
-    printf("PC : %d %X\n", registers[15], registers[15]);
-    printf("CPSR : %d %X\n", registers[16], registers[16]);
+    printf("PC\t:\t%d\t(0x%08x)\n", registers[15], registers[15]);
+    printf("CPSR\t:\t%d\t(0x%08x)\n", registers[16], registers[16]);
 
-    printf("Non-zero memory locations: \n");
+    printf("Non-zero memory:\n");
 
-    for (int i = 0; i < size; i++) {
-        if (i % 4 == 0) {
-            if (((uint32_t*)(mainMemory))[i / 4] != 0) {
-                printf("%d : %X\n", i, ((uint32_t*)(mainMemory))[i / 4]);
-            }
-        }
+    for (int i = 0; i < RAM_SIZE; i += 4) {
+      if (((int32_t*)(mainMemory))[i / 4] != 0) {
+          printf("0x%08x : 0x%02x%02x%02x%02x\n", i, mainMemory[i], mainMemory[i + 1],
+          mainMemory[i + 2], mainMemory[i + 3]);
+      }
     }
 
     free(mainMemory);
