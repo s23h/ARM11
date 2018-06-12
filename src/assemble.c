@@ -304,7 +304,7 @@ int32_t assembleSpecial(char** tokens) {
     int32_t mask = shiftVal << 7;
     operand2 = operand2 | mask;
 
-    int32_t instruction = 3785359360;
+    int32_t instruction = -509607936;
     instruction = instruction | operand2;
     mask = rd << 12;
     instruction = instruction | mask;
@@ -427,9 +427,6 @@ int main(int argc, char** argv) {
             int numTokens = 0;
             char** tokens = tokenize(line, &numTokens);
             instructionType type = getInstructionType(tokens);
-            if (type == LABEL) {
-                continue;
-            }
             int32_t instruction = 0;
             switch (type) {
                 case DATA_PROCESSING: instruction = assembleDP(tokens); break;
@@ -437,6 +434,7 @@ int main(int argc, char** argv) {
                 case BRANCH: instruction = assembleBranch(tokens, addressCounter, &labelsAddresses); break;
                 case DATA_TRANSFER: instruction = assembleDT(tokens, addressCounter, input, output, numTokens, endAddress); break;
                 case SPECIAL: instruction = assembleSpecial(tokens); break;
+                default: continue; break;
             }
             fwrite(&instruction, sizeof(int32_t), 1, output);
             addressCounter += 4;

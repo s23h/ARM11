@@ -7,29 +7,30 @@
 
 #define RAM_SIZE 65536
 
-// Loads the provided file into main memory, and returns the size of the file.
-int loadFile(uint8_t* memory, const char* fileName) {
+// Loads the provided file into main memory.
+void loadFile(uint8_t* memory, const char* fileName) {
     FILE* binaryFile = fopen(fileName, "rb");
     if (binaryFile == NULL) {
-        perror("Error opening the binary file!");
+        perror("loadFile: ");
         exit(EXIT_FAILURE);
     }
 
+    // Works out the size, in bytes, of the input file
     fseek(binaryFile, 0, SEEK_END);
     int size = ftell(binaryFile);
     fseek(binaryFile, 0, SEEK_SET);
 
+    // Reads the bytes in the file into main memory
     fread(memory, 1, size, binaryFile);
 
     fclose(binaryFile);
-    return size;
 }
 
 // To represent the 4 different types of instructions.
 typedef enum { DATA_PROCESSING, MULTIPLY, DATA_TRANSFER, BRANCH } instructionType;
 
 // Checks the bit pattern of the instruction to determine its type.
-instructionType getInstructionType(uint32_t instruction) {
+instructionType getInstructionType(int32_t instruction) {
     if (CHECK_BIT(instruction, 27) && !CHECK_BIT(instruction, 26) && CHECK_BIT(instruction, 25) && !CHECK_BIT(instruction, 24)) {
         return BRANCH;
     }
@@ -80,6 +81,8 @@ uint8_t checkCondition(uint8_t cond, int32_t* registers) {
 }
 
 // Represents a decoded instructions with all its components.
+// Since this struct is shared between all 4 instruction types, there
+// will be unused fields in the struct.
 typedef struct {
     instructionType type;
     uint8_t cond;
@@ -99,8 +102,8 @@ typedef struct {
     uint32_t offset;
 } decodedInstruction;
 
-// Returns the struct contained the decoded components of the provided Data Processing instruction.
-decodedInstruction decodeDP(uint32_t instruction) {
+// Returns the struct containing the decoded components of the provided Data Processing instruction.
+decodedInstruction decodeDP(int32_t instruction) {
     decodedInstruction decoded;
     decoded.type = DATA_PROCESSING;
 
@@ -139,6 +142,7 @@ void executeDP(decodedInstruction decoded, int32_t* registers) {
     uint8_t carry = 0;
     int shiftApplied = 0;
 
+    // For the immediate constant case
     if (decoded.i == 1) {
         uint8_t imm = ((uint8_t*)&(decoded.operand2))[0];
         uint32_t immExtend = imm;
@@ -196,12 +200,16 @@ void executeDP(decodedInstruction decoded, int32_t* registers) {
     uint32_t unsignedResult;
 
     // Calculates the result of the instruction
+    // The unsignedResult variable is for checking unsigned overflows and underflows
     switch (decoded.opcode) {
         case 0: result = registers[decoded.rn] & op2; break;
         case 1: result = registers[decoded.rn] ^ op2; break;
-        case 2: result = registers[decoded.rn] - op2; unsignedResult = (uint32_t)registers[decoded.rn] - (uint32_t)op2; break;
-        case 3: result = op2 - registers[decoded.rn]; unsignedResult = (uint32_t)op2 - (uint32_t)registers[decoded.rn]; break;
-        case 4: result = registers[decoded.rn] + op2; unsignedResult = (uint32_t)registers[decoded.rn] + (uint32_t)op2; break;
+        case 2: result = registers[decoded.rn] - op2;
+          unsignedResult = (uint32_t)registers[decoded.rn] - (uint32_t)op2; break;
+        case 3: result = op2 - registers[decoded.rn];
+          unsignedResult = (uint32_t)op2 - (uint32_t)registers[decoded.rn]; break;
+        case 4: result = registers[decoded.rn] + op2;
+          unsignedResult = (uint32_t)registers[decoded.rn] + (uint32_t)op2; break;
         case 8: result = registers[decoded.rn] & op2; break;
         case 9: result = registers[decoded.rn] ^ op2; break;
         case 10: result = registers[decoded.rn] - op2; unsignedResult = (uint32_t)registers[decoded.rn] - (uint32_t)op2; break;
@@ -262,7 +270,8 @@ void executeDP(decodedInstruction decoded, int32_t* registers) {
     }
 }
 
-decodedInstruction decodeBranch(uint32_t instruction) {
+// Decodes the provided Branch instruction and returns the struct representing it
+decodedInstruction decodeBranch(int32_t instruction) {
     decodedInstruction decoded;
     decoded.type = BRANCH;
     uint32_t result = extractBits(instruction, 4, 29);
@@ -341,7 +350,7 @@ void executeMultiply(decodedInstruction decoded, int32_t* registers) {
 
 //=========================================================================
 // Decodes Single Data Transfer instructions
-decodedInstruction decodeDT(uint32_t instruction) {
+decodedInstruction decodeDT(int32_t instruction) {
     decodedInstruction decoded;
     decoded.type = DATA_TRANSFER;
 
@@ -487,7 +496,7 @@ int main(int argc, char **argv) {
     memset(mainMemory, 0, RAM_SIZE);
 
     // Reading the binary code into main memory
-    int size = loadFile(mainMemory, argv[1]);
+    loadFile(mainMemory, argv[1]);
 
     // Creates the registers
     int32_t* registers = malloc(17 * sizeof(int32_t));

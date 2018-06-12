@@ -8,7 +8,7 @@ int32_t extractBits(int32_t number, int k, int p)
 }
 
 int32_t leftRotate(int32_t n, int d) {
-  return (n << d) | (n >> (32 - d)) & ~(-1 << d);
+  return (n << d) | ((n >> (32 - d)) & ~(-1 << d));
 }
 
 // Rotates bits to the right by the specified amount.
