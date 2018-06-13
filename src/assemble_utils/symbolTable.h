@@ -51,8 +51,3 @@ void destroyTable(symbolTable* t);
 int32_t tableLookup(symbolTable* t, char* key);
 
 #endif
-
-
-
-
-
