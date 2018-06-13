@@ -123,9 +123,6 @@ int main(int argc, char** argv) {
             int numTokens = 0;
             char** tokens = tokenize(line, &numTokens);
             instructionType type = getInstructionType(tokens);
-            if (type == LABEL) {
-                continue;
-            }
             int32_t instruction = 0;
             switch (type) {
                 case DATA_PROCESSING: instruction = assembleDP(tokens); break;
@@ -133,6 +130,7 @@ int main(int argc, char** argv) {
                 case BRANCH: instruction = assembleBranch(tokens, addressCounter, &labelsAddresses); break;
                 case DATA_TRANSFER: instruction = assembleDT(tokens, addressCounter, input, output, numTokens, endAddress); break;
                 case SPECIAL: instruction = assembleSpecial(tokens); break;
+                default: continue; break;
             }
             fwrite(&instruction, sizeof(int32_t), 1, output);
             addressCounter += 4;

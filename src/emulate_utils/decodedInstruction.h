@@ -4,6 +4,8 @@
 #include <stdint.h>
 
 // Represents a decoded instructions with all its components.
+// Since this struct is shared between all 4 instruction types, there
+// will be unused fields in the struct.
 typedef struct {
     instructionType type;
     uint8_t cond;

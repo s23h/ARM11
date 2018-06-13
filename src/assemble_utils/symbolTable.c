@@ -15,7 +15,7 @@ pair* allocatePair(void) {
     }
 
     return newPair;
-};
+}
 
 // Frees the memory that holds the specified pair
 void freePair(pair* pairToFree) {
@@ -85,10 +85,3 @@ int32_t tableLookup(symbolTable* t, char* key) {
     // Should be unreachable.
     return 0;
 }
-
-
-
-
-
-
-

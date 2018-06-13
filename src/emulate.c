@@ -9,24 +9,24 @@
 
 #define RAM_SIZE 65536
 
-// Loads the provided file into main memory, and returns the size of the file.
-int loadFile(uint8_t* memory, const char* fileName) {
+// Loads the provided file into main memory.
+void loadFile(uint8_t* memory, const char* fileName) {
     FILE* binaryFile = fopen(fileName, "rb");
     if (binaryFile == NULL) {
-        perror("Error opening the binary file!");
+        perror("loadFile: ");
         exit(EXIT_FAILURE);
     }
 
+    // Works out the size, in bytes, of the input file
     fseek(binaryFile, 0, SEEK_END);
     int size = ftell(binaryFile);
     fseek(binaryFile, 0, SEEK_SET);
 
+    // Reads the bytes in the file into main memory
     fread(memory, 1, size, binaryFile);
 
     fclose(binaryFile);
-    return size;
 }
-  //=========================================================================
 
 int main(int argc, char **argv) {
     // The main memory of the Raspberry Pi
@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
     memset(mainMemory, 0, RAM_SIZE);
 
     // Reading the binary code into main memory
-    int size = loadFile(mainMemory, argv[1]);
+    loadFile(mainMemory, argv[1]);
 
     // Creates the registers
     int32_t* registers = malloc(17 * sizeof(int32_t));

@@ -2,7 +2,7 @@
 #include <stdint.h>
 
 // Checks the bit pattern of the instruction to determine its type.
-instructionType getInstructionType(uint32_t instruction) {
+instructionType getInstructionType(int32_t instruction) {
     if (CHECK_BIT(instruction, 27) && !CHECK_BIT(instruction, 26) && CHECK_BIT(instruction, 25) && !CHECK_BIT(instruction, 24)) {
         return BRANCH;
     }
@@ -19,8 +19,9 @@ instructionType getInstructionType(uint32_t instruction) {
     }
 }
 
-// Returns the struct contained the decoded components of the provided Data Processing instruction.
-decodedInstruction decodeDP(uint32_t instruction) {
+//=========================================================================
+// Returns the struct containing the decoded components of the provided Data Processing instruction.
+decodedInstruction decodeDP(int32_t instruction) {
     decodedInstruction decoded;
     decoded.type = DATA_PROCESSING;
 
@@ -48,7 +49,9 @@ decodedInstruction decodeDP(uint32_t instruction) {
     return decoded;
 }
 
-decodedInstruction decodeBranch(uint32_t instruction) {
+//=========================================================================
+// Decodes the provided Branch instruction and returns the struct representing it
+decodedInstruction decodeBranch(int32_t instruction) {
     decodedInstruction decoded;
     decoded.type = BRANCH;
     uint32_t result = extractBits(instruction, 4, 29);
@@ -58,6 +61,7 @@ decodedInstruction decodeBranch(uint32_t instruction) {
     return decoded;
 }
 
+//=========================================================================
 // Decodes a Multiply instruction.
 decodedInstruction decodeMultiply(uint32_t instruction) {
     decodedInstruction decoded;
@@ -88,8 +92,10 @@ decodedInstruction decodeMultiply(uint32_t instruction) {
     return decoded;
 }
 
+
+//=========================================================================
 // Decodes Single Data Transfer instructions
-decodedInstruction decodeDT(uint32_t instruction) {
+decodedInstruction decodeDT(int32_t instruction) {
     decodedInstruction decoded;
     decoded.type = DATA_TRANSFER;
 

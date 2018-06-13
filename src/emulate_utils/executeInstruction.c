@@ -34,6 +34,7 @@ uint8_t checkCondition(uint8_t cond, int32_t* registers) {
     return 0;
 }
 
+
 // Executes a decoded Data Processing instruction
 void executeDP(decodedInstruction decoded, int32_t* registers) {
     if (!checkCondition(decoded.cond, registers)) {
@@ -45,6 +46,7 @@ void executeDP(decodedInstruction decoded, int32_t* registers) {
     uint8_t carry = 0;
     int shiftApplied = 0;
 
+    // For the immediate constant case
     if (decoded.i == 1) {
         uint8_t imm = ((uint8_t*)&(decoded.operand2))[0];
         uint32_t immExtend = imm;
@@ -102,12 +104,16 @@ void executeDP(decodedInstruction decoded, int32_t* registers) {
     uint32_t unsignedResult;
 
     // Calculates the result of the instruction
+    // The unsignedResult variable is for checking unsigned overflows and underflows
     switch (decoded.opcode) {
         case 0: result = registers[decoded.rn] & op2; break;
         case 1: result = registers[decoded.rn] ^ op2; break;
-        case 2: result = registers[decoded.rn] - op2; unsignedResult = (uint32_t)registers[decoded.rn] - (uint32_t)op2; break;
-        case 3: result = op2 - registers[decoded.rn]; unsignedResult = (uint32_t)op2 - (uint32_t)registers[decoded.rn]; break;
-        case 4: result = registers[decoded.rn] + op2; unsignedResult = (uint32_t)registers[decoded.rn] + (uint32_t)op2; break;
+        case 2: result = registers[decoded.rn] - op2;
+          unsignedResult = (uint32_t)registers[decoded.rn] - (uint32_t)op2; break;
+        case 3: result = op2 - registers[decoded.rn];
+          unsignedResult = (uint32_t)op2 - (uint32_t)registers[decoded.rn]; break;
+        case 4: result = registers[decoded.rn] + op2;
+          unsignedResult = (uint32_t)registers[decoded.rn] + (uint32_t)op2; break;
         case 8: result = registers[decoded.rn] & op2; break;
         case 9: result = registers[decoded.rn] ^ op2; break;
         case 10: result = registers[decoded.rn] - op2; unsignedResult = (uint32_t)registers[decoded.rn] - (uint32_t)op2; break;
@@ -168,8 +174,6 @@ void executeDP(decodedInstruction decoded, int32_t* registers) {
     }
 }
 
-
-
 int executeBranch(decodedInstruction decoded, int32_t* registers) {
     if(!checkCondition(decoded.cond, registers)) {
         return 0;
@@ -179,8 +183,6 @@ int executeBranch(decodedInstruction decoded, int32_t* registers) {
     registers[15] += offset;
     return 1;
 }
-
-//=========================================================================
 
 // Executes a decoded Multiply instruction.
 void executeMultiply(decodedInstruction decoded, int32_t* registers) {
@@ -206,9 +208,6 @@ void executeMultiply(decodedInstruction decoded, int32_t* registers) {
         }
     }
 }
-
-//=========================================================================
-
 
 // Executes Single Data Transfer instructions
 void executeDT(decodedInstruction decoded, int32_t* registers, uint8_t* mainMemory) {
@@ -316,3 +315,4 @@ void executeDT(decodedInstruction decoded, int32_t* registers, uint8_t* mainMemo
     else {
         ((int32_t*)(&(mainMemory[addressToEffect])))[0] = registers[decoded.rd];
     }
+}

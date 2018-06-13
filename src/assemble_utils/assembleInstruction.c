@@ -269,7 +269,7 @@ int32_t assembleSpecial(char** tokens) {
     int32_t mask = shiftVal << 7;
     operand2 = operand2 | mask;
 
-    int32_t instruction = 3785359360;
+    int32_t instruction = -509607936;
     instruction = instruction | operand2;
     mask = rd << 12;
     instruction = instruction | mask;
