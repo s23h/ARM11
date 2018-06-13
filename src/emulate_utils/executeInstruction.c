@@ -6,7 +6,7 @@
 #include "decodedInstruction.h"
 
 // Checks the cond code to determine whether the instruction should execute.
-uint8_t check_Condition(uint8_t cond, int32_t* registers) {
+uint8_t check_condition(uint8_t cond, int32_t *registers) {
     if (cond == 14) {
         return 1;
     }
@@ -40,52 +40,52 @@ uint8_t check_Condition(uint8_t cond, int32_t* registers) {
 
 
 // Executes a decoded Data Processing instruction
-void execute_DP(decoded_Instruction decoded, int32_t* registers) {
-    if (!check_Condition(decoded.cond, registers)) {
+void execute_dp(decoded_instruction decoded, int32_t *registers) {
+    if (!check_condition(decoded.cond, registers)) {
         return;
     }
 
     // Interpreting operand2
     int32_t op2 = 0;
     uint8_t carry = 0;
-    int shift_Applied = 0;
+    int shift_applied = 0;
 
     // For the immediate constant case
     if (decoded.i == 1) {
         uint8_t imm = ((uint8_t*)&(decoded.operand2))[0];
-        uint32_t immExtend = imm;
+        uint32_t imm_extend = imm;
         uint8_t rotate = ((uint8_t*)&(decoded.operand2))[1];
         rotate *= 2;
-        op2 = right_Rotate(immExtend, rotate);
+        op2 = right_rotate(imm_extend, rotate);
     }
     else {
         // To extract the last 4 bits
-        uint8_t rm = extract_Bits(decoded.operand2, 4, 1);
+        uint8_t rm = extract_bits(decoded.operand2, 4, 1);
         uint32_t val = registers[rm];
         // To extract the 5-bit shift value
-        uint8_t shift_Val = extract_Bits(decoded.operand2, 5, 8);
-        if (shift_Val > 0) {
-            shift_Applied = 1;
+        uint8_t shift_val = extract_bits(decoded.operand2, 5, 8);
+        if (shift_val > 0) {
+            shift_applied = 1;
         }
         // To extract the 2 bit shift type
-        uint8_t shift_Type = extract_Bits(decoded.operand2, 2, 6);
+        uint8_t shift_type = extract_bits(decoded.operand2, 2, 6);
 
         //Logical left lsl
-        if (shift_Type == 0) {
-            carry = CHECK_BIT(val, 32 - shift_Val);
-            op2 = val << shift_Val;
+        if (shift_type == 0) {
+            carry = CHECK_BIT(val, 32 - shift_val);
+            op2 = val << shift_val;
         }
         // Logical right lsr
-        else if (shift_Type == 1) {
-            carry = CHECK_BIT(val, shift_Val - 1);
-            op2 = val >> shift_Val;
+        else if (shift_type == 1) {
+            carry = CHECK_BIT(val, shift_val - 1);
+            op2 = val >> shift_val;
         }
         // Arithmetic right
-        else if (shift_Type == 2) {
-            carry = CHECK_BIT(val, shift_Val - 1);
-            val = val >> shift_Val;
+        else if (shift_type == 2) {
+            carry = CHECK_BIT(val, shift_val - 1);
+            val = val >> shift_val;
             if (CHECK_BIT(val, 31) == 1) {
-                uint32_t mask = int_Pow(2, 32 - shift_Val) * (int_Pow(2, shift_Val) - 1);
+                uint32_t mask = int_pow(2, 32 - shift_val) * (int_pow(2, shift_val) - 1);
                 op2 = val | mask;
             }
             else {
@@ -93,9 +93,9 @@ void execute_DP(decoded_Instruction decoded, int32_t* registers) {
             }
         }
         // Right rotate
-        else if (shift_Type == 3) {
-            carry = CHECK_BIT(val, shift_Val - 1);
-            op2 = right_Rotate(val, shift_Val);
+        else if (shift_type == 3) {
+            carry = CHECK_BIT(val, shift_val - 1);
+            op2 = right_rotate(val, shift_val);
         }
     }
 
@@ -105,7 +105,7 @@ void execute_DP(decoded_Instruction decoded, int32_t* registers) {
     // Executing instruction based on the opcode
 
     int32_t result;
-    uint32_t unsigned_Result;
+    uint32_t unsigned_result;
 
     // Calculates the result of the instruction
     // The unsignedResult variable is for checking unsigned overflows and underflows
@@ -113,14 +113,14 @@ void execute_DP(decoded_Instruction decoded, int32_t* registers) {
         case 0: result = registers[decoded.rn] & op2; break;
         case 1: result = registers[decoded.rn] ^ op2; break;
         case 2: result = registers[decoded.rn] - op2;
-          unsigned_Result = (uint32_t)registers[decoded.rn] - (uint32_t)op2; break;
+          unsigned_result = (uint32_t)registers[decoded.rn] - (uint32_t)op2; break;
         case 3: result = op2 - registers[decoded.rn];
-          unsigned_Result = (uint32_t)op2 - (uint32_t)registers[decoded.rn]; break;
+          unsigned_result = (uint32_t)op2 - (uint32_t)registers[decoded.rn]; break;
         case 4: result = registers[decoded.rn] + op2;
-          unsigned_Result = (uint32_t)registers[decoded.rn] + (uint32_t)op2; break;
+          unsigned_result = (uint32_t)registers[decoded.rn] + (uint32_t)op2; break;
         case 8: result = registers[decoded.rn] & op2; break;
         case 9: result = registers[decoded.rn] ^ op2; break;
-        case 10: result = registers[decoded.rn] - op2; unsigned_Result = (uint32_t)registers[decoded.rn] - (uint32_t)op2; break;
+        case 10: result = registers[decoded.rn] - op2; unsigned_result = (uint32_t)registers[decoded.rn] - (uint32_t)op2; break;
         case 12: result = registers[decoded.rn] | op2; break;
         case 13: result = op2; break;
     }
@@ -135,62 +135,62 @@ void execute_DP(decoded_Instruction decoded, int32_t* registers) {
         // Set C bit for CSPR
 
         // For the logic operations
-        if (shift_Applied && (decoded.opcode == 0 || decoded.opcode == 1 || decoded.opcode == 12 || decoded.opcode == 9
+        if (shift_applied && (decoded.opcode == 0 || decoded.opcode == 1 || decoded.opcode == 12 || decoded.opcode == 9
         || decoded.opcode == 8 || decoded.opcode == 13)) {
-            set_Bit_32(&(registers[16]), 29, carry);
+            set_bit32(&(registers[16]), 29, carry);
         }
         // addition
         else if (decoded.opcode == 4) {
-            if (unsigned_Result < registers[decoded.rn]) { // overflow test
-                set_Bit_32(&(registers[16]), 29, 1);
+            if (unsigned_result < registers[decoded.rn]) { // overflow test
+                set_bit32(&(registers[16]), 29, 1);
             }
             else {
-                set_Bit_32(&(registers[16]), 29, 0);
+                set_bit32(&(registers[16]), 29, 0);
             }
         }
         else if (decoded.opcode == 2 || decoded.opcode == 10) {
-            if (unsigned_Result > registers[decoded.rn]) { // underflow test
-                set_Bit_32(&(registers[16]), 29, 0);
+            if (unsigned_result > registers[decoded.rn]) { // underflow test
+                set_bit32(&(registers[16]), 29, 0);
             }
             else {
-                set_Bit_32(&(registers[16]), 29, 1);
+                set_bit32(&(registers[16]), 29, 1);
             }
         }
         else if (decoded.opcode == 3) {
-            if (unsigned_Result > op2) {
-                set_Bit_32(&(registers[16]), 29, 0);
+            if (unsigned_result > op2) {
+                set_bit32(&(registers[16]), 29, 0);
             }
             else {
-                set_Bit_32(&(registers[16]), 29, 1);
+                set_bit32(&(registers[16]), 29, 1);
             }
         }
         // *********************************************
         // Set the Z bit
         if (result == 0) {
-            set_Bit_32(&(registers[16]), 30, 1);
+            set_bit32(&(registers[16]), 30, 1);
         }
         else {
-            set_Bit_32(&(registers[16]), 30, 0);
+            set_bit32(&(registers[16]), 30, 0);
         }
 
         // Set the N bit
-        set_Bit_32(&(registers[16]), 31, CHECK_BIT(result, 31));
+        set_bit32(&(registers[16]), 31, CHECK_BIT(result, 31));
     }
 }
 
-int execute_Branch(decoded_Instruction decoded, int32_t* registers) {
-    if(!check_Condition(decoded.cond, registers)) {
+int execute_branch(decoded_instruction decoded, int32_t *registers) {
+    if(!check_condition(decoded.cond, registers)) {
         return 0;
     }
-    uint32_t shifted = extract_Bits(decoded.offset << 2, 24, 1);
-    int32_t offset = sign_Extend_24_32(shifted);
+    uint32_t shifted = extract_bits(decoded.offset << 2, 24, 1);
+    int32_t offset = sign_extend_24_32(shifted);
     registers[15] += offset;
     return 1;
 }
 
 // Executes a decoded Multiply instruction.
-void execute_Multiply(decoded_Instruction decoded, int32_t* registers) {
-    if (!check_Condition(decoded.cond, registers)) {
+void execute_multiply(decoded_instruction decoded, int32_t *registers) {
+    if (!check_condition(decoded.cond, registers)) {
         return;
     }
 
@@ -203,45 +203,45 @@ void execute_Multiply(decoded_Instruction decoded, int32_t* registers) {
     registers[decoded.rd] = truncated;
 
     if (decoded.s) {
-        set_Bit_32(&(registers[16]), 31, CHECK_BIT(truncated, 31));
+        set_bit32(&(registers[16]), 31, CHECK_BIT(truncated, 31));
         if (truncated == 0) {
-            set_Bit_32(&(registers[16]), 30, 1);
+            set_bit32(&(registers[16]), 30, 1);
         }
         else {
-            set_Bit_32(&(registers[16]), 30, 0);
+            set_bit32(&(registers[16]), 30, 0);
         }
     }
 }
 
 // Executes Single Data Transfer instructions
-void execute_DT(decoded_Instruction decoded, int32_t* registers, uint8_t* mainMemory) {
-    if (!check_Condition(decoded.cond, registers)) {
+void execute_dt(decoded_instruction decoded, int32_t *registers, uint8_t *mainMemory) {
+    if (!check_condition(decoded.cond, registers)) {
         return;
     }
 
     uint32_t offset = 0;
     if (decoded.i) {
         // To extract the last 4 bits
-        uint8_t rm = extract_Bits(decoded.offset, 4, 1);
+        uint8_t rm = extract_bits(decoded.offset, 4, 1);
         uint32_t val = registers[rm];
         // To extract the 5-bit shift value
-        uint8_t shiftVal = extract_Bits(decoded.offset, 5, 8);
+        uint8_t shif_val = extract_bits(decoded.offset, 5, 8);
         // To extract the 2 bit shift type
-        uint8_t shiftType = extract_Bits(decoded.offset, 2, 6);
+        uint8_t shift_type = extract_bits(decoded.offset, 2, 6);
 
         //Logical left lsl
-        if (shiftType == 0) {
-            offset = val << shiftVal;
+        if (shift_type == 0) {
+            offset = val << shif_val;
         }
         // Logical right lsr
-        else if (shiftType == 1) {
-            offset = val >> shiftVal;
+        else if (shift_type == 1) {
+            offset = val >> shif_val;
         }
         // Arithmetic right
-        else if (shiftType == 2) {
-            val = val >> shiftVal;
+        else if (shift_type == 2) {
+            val = val >> shif_val;
             if (CHECK_BIT(val, 31) == 1) {
-                uint32_t mask = int_Pow(2, 32 - shiftVal) * (int_Pow(2, shiftVal) - 1);
+                uint32_t mask = int_pow(2, 32 - shif_val) * (int_pow(2, shif_val) - 1);
                 offset = val | mask;
             }
             else {
@@ -249,8 +249,8 @@ void execute_DT(decoded_Instruction decoded, int32_t* registers, uint8_t* mainMe
             }
         }
         // Right rotate
-        else if (shiftType == 3) {
-            offset = right_Rotate(val, shiftVal);
+        else if (shift_type == 3) {
+            offset = right_rotate(val, shif_val);
         }
     }
     else {

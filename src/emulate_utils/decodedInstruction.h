@@ -8,10 +8,10 @@
 // will be unused fields in the struct.
 
 // To represent the 4 different types of instructions.
-typedef enum { DATA_PROCESSING, MULTIPLY, DATA_TRANSFER, BRANCH } instruction_Type;
+typedef enum { DATA_PROCESSING, MULTIPLY, DATA_TRANSFER, BRANCH } instruction_type;
 
 typedef struct {
-    instruction_Type type;
+    instruction_type type;
     uint8_t cond;
     uint8_t i;
     uint8_t opcode;
@@ -27,16 +27,16 @@ typedef struct {
     uint8_t l;
     uint8_t rest;
     uint32_t offset;
-} decoded_Instruction;
+} decoded_instruction;
 
-instruction_Type get_Instruction_Type(int32_t instruction);
+instruction_type get_instruction_type(int32_t instruction);
 
-decoded_Instruction decode_DP(int32_t instruction);
+decoded_instruction decode_dp(int32_t instruction);
 
-decoded_Instruction decode_Branch(int32_t instruction);
+decoded_instruction decode_branch(int32_t instruction);
 
-decoded_Instruction decode_Multiply(uint32_t instruction);
+decoded_instruction decode_multiply(uint32_t instruction);
 
-decoded_Instruction decode_DT(int32_t instruction);
+decoded_instruction decode_dt(int32_t instruction);
 
 #endif

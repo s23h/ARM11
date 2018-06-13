@@ -6,21 +6,22 @@
 #include <string.h>
 #include <stdint.h>
 
-static int num_Data_Writes = 0;
-extern symbol_Table* opcodes;
+static int num_data_writes = 0;
+extern symbol_table* opcodes;
 
-typedef enum { DATA_PROCESSING, MULTIPLY, DATA_TRANSFER, BRANCH, LABEL, SPECIAL } instruction_Type;
+typedef enum { DATA_PROCESSING, MULTIPLY, DATA_TRANSFER, BRANCH, LABEL, SPECIAL } instruction_type;
 
-instruction_Type get_Instruction_Type(char** tokens);
+instruction_type get_instruction_type(char **tokens);
 
-int32_t assemble_DP(char** tokens);
+int32_t assemble_dp(char **tokens);
 
-int32_t assemble_Mult(char** tokens);
+int32_t assemble_mult(char **tokens);
 
-int32_t assemble_Branch(char** tokens, int32_t current_Address, symbol_Table* labels_Map);
+int32_t assemble_branch(char **tokens, int32_t currentddress, symbol_table *labels_map);
 
-int32_t assemble_DT(char** tokens, int32_t current_Address, FILE* input, FILE* output, int num_Tokens, int32_t end_Address);
+int32_t assemble_dt(char **tokens, int32_t current_address, FILE *input, FILE *output, int num_tokens,
+                    int32_t end_address);
 
-int32_t assemble_Special(char** tokens);
+int32_t assemble_special(char **tokens);
 
 #endif

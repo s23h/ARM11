@@ -9,9 +9,9 @@ all: assemble emulate
 
 assemble: assemble.o utilities.o assemble_utils/symbolTable.o assemble_utils/assembleInstruction.o
 
-emulate: emulate.o emulate_utils/decoded_Instruction.o emulate_utils/executeInstruction.o utilities.o
+emulate: emulate.o emulate_utils/decoded_instruction.o emulate_utils/executeInstruction.o utilities.o
 
-decoded_Instruction.o: decoded_Instruction.h utilities.h
+decoded_instruction.o: decoded_instruction.h utilities.h
 
 executeInstruction.o: executeInstruction.h utilities.h
 
