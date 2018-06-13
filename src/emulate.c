@@ -8,79 +8,85 @@
 #include "emulate_utils/executeInstruction.h"
 
 // Loads the provided file into main memory.
-void loadFile(uint8_t* memory, const char* fileName) {
-    FILE* binaryFile = fopen(fileName, "rb");
-    if (binaryFile == NULL) {
-        perror("loadFile: ");
+void load_File(uint8_t* memory, const char* file_Name) {
+    FILE* binary_File = fopen(file_Name, "rb");
+    if (binary_File == NULL) {
+        perror("load_File: ");
         exit(EXIT_FAILURE);
     }
 
     // Works out the size, in bytes, of the input file
-    fseek(binaryFile, 0, SEEK_END);
-    int size = ftell(binaryFile);
-    fseek(binaryFile, 0, SEEK_SET);
+    fseek(binary_File, 0, SEEK_END);
+    int size = ftell(binary_File);
+    fseek(binary_File, 0, SEEK_SET);
 
     // Reads the bytes in the file into main memory
-    fread(memory, 1, size, binaryFile);
+    fread(memory, 1, size, binary_File);
 
-    fclose(binaryFile);
+    fclose(binary_File);
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     // The main memory of the Raspberry Pi
-    uint8_t* mainMemory = malloc(RAM_SIZE);
-    memset(mainMemory, 0, RAM_SIZE);
+    uint8_t* main_Memory = malloc(RAM_SIZE);
+    memset(main_Memory, 0, RAM_SIZE);
 
     // Reading the binary code into main memory
-    loadFile(mainMemory, argv[1]);
+    load_File(main_Memory, argv[1]);
 
     // Creates the registers
     int32_t* registers = malloc(17 * sizeof(int32_t));
     memset(registers, 0, 17 * sizeof(int32_t));
 
     // The three stage pipeline
-    decodedInstruction decoded;
+    decoded_Instruction decoded;
     int32_t fetched;
 
-    int decodeAvailable = 0;
-    int fetchAvailable = 0;
+    int decode_Available = 0;
+    int fetch_Available = 0;
     int halt = 0;
 
     while (1) {
         // The execution stage of the pipeline.
-        if (decodeAvailable) {
+        if (decode_Available) {
             if (halt) {
                 break;
             }
             switch (decoded.type) {
-                    case DATA_PROCESSING : executeDP(decoded, registers); break;
-                    case MULTIPLY : executeMultiply(decoded, registers); break;
-                    case DATA_TRANSFER : executeDT(decoded, registers, mainMemory); break;
-                    case BRANCH : if (executeBranch(decoded, registers)) { decodeAvailable = 0; fetchAvailable = 0; } break;
-                    // should be unreachable
-                    default : break;
+                case DATA_PROCESSING : execute_DP(decoded, registers); break;
+                case MULTIPLY : execute_Multiply(decoded, registers); break;
+                case DATA_TRANSFER : execute_DT(decoded, registers, main_Memory); break;
+                case BRANCH : if (execute_Branch(decoded, registers)) { decode_Available = 0; fetch_Available = 0; } break;
+                // should be unreachable
+                default : break;
             }
         }
 
         // The decode stage of the pipeline.
-        if (fetchAvailable) {
-            decodeAvailable = 1;
+        if (fetch_Available) {
+            decode_Available = 1;
+
             if (fetched == 0) {
                 halt = 1;
             }
+
             else {
-                switch (getInstructionType(fetched)) {
-                    case DATA_PROCESSING : decoded = decodeDP(fetched); break;
-                    case MULTIPLY : decoded = decodeMultiply(fetched); break;
-                    case DATA_TRANSFER : decoded = decodeDT(fetched); break;
-                    case BRANCH : decoded = decodeBranch(fetched); break;
+                switch (get_Instruction_Type(fetched)) {
+                    case DATA_PROCESSING : decoded = decode_DP(fetched);
+                    break;
+                    case MULTIPLY : decoded = decode_Multiply(fetched);
+                    break;
+                    case DATA_TRANSFER : decoded = decode_DT(fetched);
+                    break;
+                    case BRANCH : decoded = decode_Branch(fetched);
+                    break;
                     // should be unreachable
                     default : break;
                 }
             }
         }
-        fetched = ((int32_t*)(&mainMemory[registers[15]]))[0];
-        fetchAvailable = 1;
+        fetched = ((int32_t*)(&main_Memory[registers[15]]))[0];
+        fetch_Available = 1;
         registers[15] += 4;
     }
 
@@ -96,13 +102,13 @@ int main(int argc, char **argv) {
     printf("Non-zero memory:\n");
 
     for (int i = 0; i < RAM_SIZE; i += 4) {
-      if (((int32_t*)(mainMemory))[i / 4] != 0) {
-          printf("0x%08x : 0x%02x%02x%02x%02x\n", i, mainMemory[i], mainMemory[i + 1],
-          mainMemory[i + 2], mainMemory[i + 3]);
-      }
+        if (((int32_t*)(main_Memory))[i / 4] != 0) {
+            printf("0x%08x : 0x%02x%02x%02x%02x\n", i, main_Memory[i], main_Memory[i + 1],
+            main_Memory[i + 2], main_Memory[i + 3]);
+        }
     }
 
-    free(mainMemory);
+    free(main_Memory);
     free(registers);
     return 0;
   }

@@ -4,7 +4,7 @@
 #include "decodedInstruction.h"
 
 // Checks the bit pattern of the instruction to determine its type.
-instructionType getInstructionType(int32_t instruction) {
+instruction_Type get_Instruction_Type(int32_t instruction) {
     if (CHECK_BIT(instruction, 27) && !CHECK_BIT(instruction, 26) && CHECK_BIT(instruction, 25) && !CHECK_BIT(instruction, 24)) {
         return BRANCH;
     }
@@ -12,9 +12,9 @@ instructionType getInstructionType(int32_t instruction) {
         return DATA_TRANSFER;
     }
     else if (!CHECK_BIT(instruction, 27) && !CHECK_BIT(instruction, 26) && !CHECK_BIT(instruction, 25) && !CHECK_BIT(instruction, 24)
-             && !CHECK_BIT(instruction, 23) && !CHECK_BIT(instruction, 22)
-             && CHECK_BIT(instruction, 7) && !CHECK_BIT(instruction, 6) && !CHECK_BIT(instruction, 5) && CHECK_BIT(instruction, 4)) {
-                return MULTIPLY;
+        && !CHECK_BIT(instruction, 23) && !CHECK_BIT(instruction, 22)
+        && CHECK_BIT(instruction, 7) && !CHECK_BIT(instruction, 6) && !CHECK_BIT(instruction, 5) && CHECK_BIT(instruction, 4)) {
+        return MULTIPLY;
     }
     else {
         return DATA_PROCESSING;
@@ -23,29 +23,29 @@ instructionType getInstructionType(int32_t instruction) {
 
 //=========================================================================
 // Returns the struct containing the decoded components of the provided Data Processing instruction.
-decodedInstruction decodeDP(int32_t instruction) {
-    decodedInstruction decoded;
+decoded_Instruction decode_DP(int32_t instruction) {
+    decoded_Instruction decoded;
     decoded.type = DATA_PROCESSING;
 
-    uint32_t result = extractBits(instruction, 4, 29);
+    uint32_t result = extract_Bits(instruction, 4, 29);
     decoded.cond = ((uint8_t*)(&result))[0];
 
-    result = extractBits(instruction, 1, 26);
+    result = extract_Bits(instruction, 1, 26);
     decoded.i = ((uint8_t*)(&result))[0];
 
-    result = extractBits(instruction, 4, 22);
+    result = extract_Bits(instruction, 4, 22);
     decoded.opcode = ((uint8_t*)(&result))[0];
 
-    result = extractBits(instruction, 1, 21);
+    result = extract_Bits(instruction, 1, 21);
     decoded.s = ((uint8_t*)(&result))[0];
 
-    result = extractBits(instruction, 4, 17);
+    result = extract_Bits(instruction, 4, 17);
     decoded.rn = ((uint8_t*)(&result))[0];
 
-    result = extractBits(instruction, 4, 13);
+    result = extract_Bits(instruction, 4, 13);
     decoded.rd = ((uint8_t*)(&result))[0];
 
-    result = extractBits(instruction, 12, 1);
+    result = extract_Bits(instruction, 12, 1);
     decoded.operand2 = ((uint16_t*)(&result))[0];
 
     return decoded;
@@ -53,42 +53,42 @@ decodedInstruction decodeDP(int32_t instruction) {
 
 //=========================================================================
 // Decodes the provided Branch instruction and returns the struct representing it
-decodedInstruction decodeBranch(int32_t instruction) {
-    decodedInstruction decoded;
+decoded_Instruction decode_Branch(int32_t instruction) {
+    decoded_Instruction decoded;
     decoded.type = BRANCH;
-    uint32_t result = extractBits(instruction, 4, 29);
+    uint32_t result = extract_Bits(instruction, 4, 29);
     decoded.cond = ((uint8_t*)(&result))[0];
-    decoded.offset = extractBits(instruction, 24, 1);
+    decoded.offset = extract_Bits(instruction, 24, 1);
 
     return decoded;
 }
 
 //=========================================================================
 // Decodes a Multiply instruction.
-decodedInstruction decodeMultiply(uint32_t instruction) {
-    decodedInstruction decoded;
+decoded_Instruction decode_Multiply(uint32_t instruction) {
+    decoded_Instruction decoded;
     decoded.type = MULTIPLY;
 
     uint32_t result = 0;
-    result = extractBits(instruction, 4, 29);
+    result = extract_Bits(instruction, 4, 29);
     decoded.cond = ((uint8_t*)(&result))[0];
 
-    result = extractBits(instruction, 1, 22);
+    result = extract_Bits(instruction, 1, 22);
     decoded.a = ((uint8_t*)(&result))[0];
 
-    result = extractBits(instruction, 1, 21);
+    result = extract_Bits(instruction, 1, 21);
     decoded.s = ((uint8_t*)(&result))[0];
 
-    result = extractBits(instruction, 4, 17);
+    result = extract_Bits(instruction, 4, 17);
     decoded.rd = ((uint8_t*)(&result))[0];
 
-    result = extractBits(instruction, 4, 13);
+    result = extract_Bits(instruction, 4, 13);
     decoded.rn = ((uint8_t*)(&result))[0];
 
-    result = extractBits(instruction, 4, 9);
+    result = extract_Bits(instruction, 4, 9);
     decoded.rs = ((uint8_t*)(&result))[0];
 
-    result = extractBits(instruction, 4, 1);
+    result = extract_Bits(instruction, 4, 1);
     decoded.rm = ((uint8_t*)(&result))[0];
 
     return decoded;
@@ -97,33 +97,33 @@ decodedInstruction decodeMultiply(uint32_t instruction) {
 
 //=========================================================================
 // Decodes Single Data Transfer instructions
-decodedInstruction decodeDT(int32_t instruction) {
-    decodedInstruction decoded;
+decoded_Instruction decode_DT(int32_t instruction) {
+    decoded_Instruction decoded;
     decoded.type = DATA_TRANSFER;
 
     uint32_t result = 0;
-    result = extractBits(instruction, 4, 29);
+    result = extract_Bits(instruction, 4, 29);
     decoded.cond = ((uint8_t*)(&result))[0];
 
-    result = extractBits(instruction, 1, 26);
+    result = extract_Bits(instruction, 1, 26);
     decoded.i = ((uint8_t*)(&result))[0];
 
-    result = extractBits(instruction, 1, 25);
+    result = extract_Bits(instruction, 1, 25);
     decoded.p = ((uint8_t*)(&result))[0];
 
-    result = extractBits(instruction, 1, 24);
+    result = extract_Bits(instruction, 1, 24);
     decoded.u = ((uint8_t*)(&result))[0];
 
-    result = extractBits(instruction, 1, 21);
+    result = extract_Bits(instruction, 1, 21);
     decoded.l = ((uint8_t*)(&result))[0];
 
-    result = extractBits(instruction, 4, 17);
+    result = extract_Bits(instruction, 4, 17);
     decoded.rn = ((uint8_t*)(&result))[0];
 
-    result = extractBits(instruction, 4, 13);
+    result = extract_Bits(instruction, 4, 13);
     decoded.rd = ((uint8_t*)(&result))[0];
 
-    decoded.offset = extractBits(instruction, 12, 1);
+    decoded.offset = extract_Bits(instruction, 12, 1);
 
     return decoded;
 }

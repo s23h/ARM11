@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="arm11_34"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="arm11_34">
+				<Option output="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/arm11_34" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src"/>
+					<Add directory="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/assemble_utils"/>
+					<Add directory="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/emulate_utils"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 arm11_34"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="arm11_34/fast">
+				<Option output="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/arm11_34" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src"/>
+					<Add directory="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/assemble_utils"/>
+					<Add directory="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/emulate_utils"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 arm11_34/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/doc/Checkpoint.tex">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/doc/Makefile">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/doc/Report.tex">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/programs/gpio.s">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/assemble.c">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/assemble_utils/assembleInstruction.c">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/assemble_utils/assembleInstruction.h">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/assemble_utils/symbolTable.c">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/assemble_utils/symbolTable.h">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/emulate.c">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/emulate_utils/decodedInstruction.c">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/emulate_utils/decodedInstruction.h">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/emulate_utils/executeInstruction.c">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/emulate_utils/executeInstruction.h">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/test.c">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/utilities.c">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/src/utilities.h">
+			<Option target="arm11_34"/>
+		</Unit>
+		<Unit filename="/Users/Jeepmcbook/Documents/Imperial_Computing_work/Programming_III/arm11_34/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

@@ -9,7 +9,7 @@
 #define MAX_TOKENS 6
 #define MAXC 511
 
-symbolTable* opcodes;
+symbol_Table* opcodes;
 
 // Breaks down a line into its constituent tokens -- e.g. mov r1, r2 would be turned into an string array containing
 // mov, r1, r2 as its elements
@@ -35,68 +35,68 @@ char** tokenize(char* line, int* numTokens) {
     return tokenArray;
 }
 
-void init_opcodes(symbolTable* opcodes) {
+void init_Opcodes(symbol_Table* opcodes) {
   initTable(opcodes);
 
-  insertBack(opcodes, "and", 0);
-  insertBack(opcodes, "eor", 1);
-  insertBack(opcodes, "sub", 2);
-  insertBack(opcodes, "rsb", 3);
-  insertBack(opcodes, "add", 4);
-  insertBack(opcodes, "orr", 12);
-  insertBack(opcodes, "mov", 13);
-  insertBack(opcodes, "tst", 8);
-  insertBack(opcodes, "teq", 9);
-  insertBack(opcodes, "cmp", 10);
+  insert_Back(opcodes, "and", 0);
+  insert_Back(opcodes, "eor", 1);
+  insert_Back(opcodes, "sub", 2);
+  insert_Back(opcodes, "rsb", 3);
+  insert_Back(opcodes, "add", 4);
+  insert_Back(opcodes, "orr", 12);
+  insert_Back(opcodes, "mov", 13);
+  insert_Back(opcodes, "tst", 8);
+  insert_Back(opcodes, "teq", 9);
+  insert_Back(opcodes, "cmp", 10);
 
-  insertBack(opcodes, "beq", 0);
-  insertBack(opcodes, "bne", 1);
-  insertBack(opcodes, "bge", 10);
-  insertBack(opcodes, "blt", 11);
-  insertBack(opcodes, "bgt", 12);
-  insertBack(opcodes, "ble", 13);
-  insertBack(opcodes, "bal", 14);
-  insertBack(opcodes, "b", 14);
+  insert_Back(opcodes, "beq", 0);
+  insert_Back(opcodes, "bne", 1);
+  insert_Back(opcodes, "bge", 10);
+  insert_Back(opcodes, "blt", 11);
+  insert_Back(opcodes, "bgt", 12);
+  insert_Back(opcodes, "ble", 13);
+  insert_Back(opcodes, "bal", 14);
+  insert_Back(opcodes, "b", 14);
 }
 
 int main(int argc, char** argv) {
     // Records the number of data items written to the end of the assembled instruction file by ldr/str.
-    opcodes = malloc(sizeof(symbolTable));
-    init_opcodes(opcodes);
-    symbolTable labelsAddresses;
-    initTable(&labelsAddresses);
+    opcodes = malloc(sizeof(symbol_Table));
+    init_Opcodes(opcodes);
+    symbol_Table labels_Addresses;
+    initTable(&labels_Addresses);
 
     // The first pass over the source file that builds up the symbol table.
-    FILE *firstPass = fopen(argv[1], "r");
-    int32_t addressCounter = 0;
-    if (firstPass != NULL)
+    FILE *first_Pass = fopen(argv[1], "r");
+    int32_t address_Counter = 0;
+    if (first_Pass != NULL)
     {
         char line[MAXC + 1]; // +1 for the null character at the end
-        while (fgets(line, sizeof(line), firstPass) != NULL) /* read a line */
+        while (fgets(line, sizeof(line), first_Pass) != NULL) /* read a line */
         {
             if (line[0] == '\n') {
               continue;
             }
             int temp;
             char** tokens = tokenize(line, &temp);
-            if (getInstructionType(tokens) == LABEL) {
-                insertBack(&labelsAddresses, tokens[0], addressCounter);
+            if (get_Instruction_Type(tokens) == LABEL) {
+                insert_Back(&labels_Addresses, tokens[0], address_Counter);
             }
             else {
-                addressCounter += 4;
+                address_Counter += 4;
             }
 
             free(tokens);
 
         }
-        fclose(firstPass);
+        fclose(first_Pass);
 
     }
     else
     {
         perror(""); /* why didn't the file open? */
     }
-    int32_t endAddress = addressCounter;
+    int32_t end_Address = address_Counter;
 
     // The second pass over the source file, outputs the binary instructions.
     FILE *input = fopen(argv[1], "r");
@@ -104,27 +104,33 @@ int main(int argc, char** argv) {
 
     if (input != NULL && output != NULL)
     {
-        addressCounter = 0;
+        address_Counter = 0;
         char line[MAXC + 1]; // +1 for the null character at the end
         while (fgets(line, sizeof(line), input) != NULL)
         {
             if (line[0] == '\n') {
               continue;
             }
-            int numTokens = 0;
-            char** tokens = tokenize(line, &numTokens);
-            instructionType type = getInstructionType(tokens);
+            int num_Tokens = 0;
+            char** tokens = tokenize(line, &num_Tokens);
+            instruction_Type type = get_Instruction_Type(tokens);
             int32_t instruction = 0;
             switch (type) {
-                case DATA_PROCESSING: instruction = assembleDP(tokens); break;
-                case MULTIPLY: instruction = assembleMult(tokens); break;
-                case BRANCH: instruction = assembleBranch(tokens, addressCounter, &labelsAddresses); break;
-                case DATA_TRANSFER: instruction = assembleDT(tokens, addressCounter, input, output, numTokens, endAddress); break;
-                case SPECIAL: instruction = assembleSpecial(tokens); break;
-                default: continue; break;
+                case DATA_PROCESSING: instruction = assemble_DP(tokens);
+                break;
+                case MULTIPLY: instruction = assemble_Mult(tokens);
+                break;
+                case BRANCH: instruction = assemble_Branch(tokens, address_Counter, &labels_Addresses);
+                break;
+                case DATA_TRANSFER: instruction = assemble_DT(tokens, address_Counter, input, output, num_Tokens, end_Address);
+                break;
+                case SPECIAL: instruction = assemble_Special(tokens);
+                break;
+                default: continue;
+                break;
             }
             fwrite(&instruction, sizeof(int32_t), 1, output);
-            addressCounter += 4;
+            address_Counter += 4;
             free(tokens);
         }
         fclose(input);
@@ -135,7 +141,7 @@ int main(int argc, char** argv) {
         perror("");
     }
 
-    destroyTable(&labelsAddresses);
-    destroyTable(opcodes);
+    destroy_Table(&labels_Addresses);
+    destroy_Table(opcodes);
     free(opcodes);
 }

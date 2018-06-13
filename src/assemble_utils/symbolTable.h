@@ -18,36 +18,36 @@ typedef struct keyValuePair pair;
 typedef struct {
     pair *header;
     pair *footer;
-} symbolTable;
+} symbol_Table;
 
 // Allocates memory for a key-value pair
-pair* allocatePair(void);
+pair* allocate_Pair(void);
 
 // Frees the memory that holds the specified pair
-void freePair(pair* pairToFree);
+void free_Pair(pair* pairToFree);
 
 // Initialises a new symbol table
-void initTable(symbolTable* t);
+void initTable(symbol_Table* t);
 
 typedef pair* tableIter;
 
 // Returns a iterator pointing to the beginning of the list.
-tableIter tableBegin(symbolTable* t);
+tableIter table_Begin(symbol_Table* t);
 
 // Returns a iterator pointing to one past the end of the list.
-tableIter tableEnd(symbolTable *t);
+tableIter table_End(symbol_Table* t);
 
 // Inserts a new pair before the current iterator.
-void tableInsert(symbolTable* t, tableIter iter, char* key, int32_t value);
+void table_Insert(symbol_Table* t, tableIter iter, char* key, int32_t value);
 
 // Inserts a new pair at the front of the list.
-void insertFront(symbolTable* t, char* key, int32_t value);
+void insert_Front(symbol_Table* t, char* key, int32_t value);
 
 // Inserts a new pair at the back of the list.
-void insertBack(symbolTable* t, char* key, int32_t value);
+void insert_Back(symbol_Table* t, char* key, int32_t value);
 
-void destroyTable(symbolTable* t);
+void destroy_Table(symbol_Table* t);
 
-int32_t tableLookup(symbolTable* t, char* key);
+int32_t table_Lookup(symbol_Table* t, char* key);
 
 #endif
