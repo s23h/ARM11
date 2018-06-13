@@ -1,15 +1,45 @@
-#include "symbolTable.h"
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
-#include "assembleInstruction.h"
+#include "symbolTable.h"
 #include "../utilities.h"
+#include "assembleInstruction.h"
+
+// Determines the instruction type from the list of tokens provided.
+instructionType getInstructionType(char** tokens) {
+    if ((strcmp(tokens[0], "add") == 0) || (strcmp(tokens[0], "sub") == 0) || (strcmp(tokens[0], "rsb") == 0)
+        || (strcmp(tokens[0], "and") == 0) || (strcmp(tokens[0], "eor") == 0) || (strcmp(tokens[0], "orr") == 0)
+        || (strcmp(tokens[0], "mov") == 0) || (strcmp(tokens[0], "tst") == 0) || (strcmp(tokens[0], "teq") == 0)
+        || (strcmp(tokens[0], "cmp") == 0)) {
+        return DATA_PROCESSING;
+    }
+
+    if ((strcmp(tokens[0], "mul") == 0) || (strcmp(tokens[0], "mla") == 0)) {
+        return MULTIPLY;
+    }
+
+    if ((strcmp(tokens[0], "ldr") == 0) || (strcmp(tokens[0], "str") == 0)) {
+        return DATA_TRANSFER;
+    }
+
+    if ((strcmp(tokens[0], "beq") == 0) || (strcmp(tokens[0], "bne") == 0) || (strcmp(tokens[0], "bge") == 0) ||
+        (strcmp(tokens[0], "blt") == 0) || (strcmp(tokens[0], "bgt") == 0) || (strcmp(tokens[0], "ble") == 0) ||
+        (strcmp(tokens[0], "b") == 0) || strcmp(tokens[0], "bal") == 0) {
+        return BRANCH;
+    }
+
+    if ((strcmp(tokens[0], "lsl") == 0) || (strcmp(tokens[0], "andeq") == 0)) {
+        return SPECIAL;
+    }
+
+    return LABEL;
+}
+
 
 // Returns a 32-bit value representing the machine code instruction corresponding to the specified
 // Data Processing instruction, represented in token form
 int32_t assembleDP(char** tokens) {
-    int32_t opcode = tableLookup(&opcodes, tokens[0]);
+    int32_t opcode = tableLookup(opcodes, tokens[0]);
 
     int32_t rd = 0;
     int32_t rn = 0;
@@ -136,7 +166,7 @@ int32_t assembleMult(char** tokens) {
 
 int32_t assembleBranch(char** tokens, int32_t currentAddress, symbolTable* labelsMap) {
     int32_t cond = 0;
-    cond = tableLookup(&opcodes, tokens[0]);
+    cond = tableLookup(opcodes, tokens[0]);
 
     int32_t offset = tableLookup(labelsMap, tokens[1]) - currentAddress;
     offset -= 8; // takes into account of the 8 byte pipeline effect
@@ -278,34 +308,4 @@ int32_t assembleSpecial(char** tokens) {
     instruction = instruction | mask;
     return instruction;
   }
-}
-
-// Determines the instruction type from the list of tokens provided.
-instructionType getInstructionType(char** tokens) {
-    if ((strcmp(tokens[0], "add") == 0) || (strcmp(tokens[0], "sub") == 0) || (strcmp(tokens[0], "rsb") == 0)
-        || (strcmp(tokens[0], "and") == 0) || (strcmp(tokens[0], "eor") == 0) || (strcmp(tokens[0], "orr") == 0)
-        || (strcmp(tokens[0], "mov") == 0) || (strcmp(tokens[0], "tst") == 0) || (strcmp(tokens[0], "teq") == 0)
-        || (strcmp(tokens[0], "cmp") == 0)) {
-        return DATA_PROCESSING;
-    }
-
-    if ((strcmp(tokens[0], "mul") == 0) || (strcmp(tokens[0], "mla") == 0)) {
-        return MULTIPLY;
-    }
-
-    if ((strcmp(tokens[0], "ldr") == 0) || (strcmp(tokens[0], "str") == 0)) {
-        return DATA_TRANSFER;
-    }
-
-    if ((strcmp(tokens[0], "beq") == 0) || (strcmp(tokens[0], "bne") == 0) || (strcmp(tokens[0], "bge") == 0) ||
-        (strcmp(tokens[0], "blt") == 0) || (strcmp(tokens[0], "bgt") == 0) || (strcmp(tokens[0], "ble") == 0) ||
-        (strcmp(tokens[0], "b") == 0) || strcmp(tokens[0], "bal") == 0) {
-        return BRANCH;
-    }
-
-    if ((strcmp(tokens[0], "lsl") == 0) || (strcmp(tokens[0], "andeq") == 0)) {
-        return SPECIAL;
-    }
-
-    return LABEL;
 }

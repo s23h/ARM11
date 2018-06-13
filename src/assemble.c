@@ -9,6 +9,8 @@
 #define MAX_TOKENS 6
 #define MAXC 511
 
+symbolTable* opcodes;
+
 // Breaks down a line into its constituent tokens -- e.g. mov r1, r2 would be turned into an string array containing
 // mov, r1, r2 as its elements
 char** tokenize(char* line, int* numTokens) {
@@ -33,38 +35,34 @@ char** tokenize(char* line, int* numTokens) {
     return tokenArray;
 }
 
+void init_opcodes(symbolTable* opcodes) {
+  initTable(opcodes);
+
+  insertBack(opcodes, "and", 0);
+  insertBack(opcodes, "eor", 1);
+  insertBack(opcodes, "sub", 2);
+  insertBack(opcodes, "rsb", 3);
+  insertBack(opcodes, "add", 4);
+  insertBack(opcodes, "orr", 12);
+  insertBack(opcodes, "mov", 13);
+  insertBack(opcodes, "tst", 8);
+  insertBack(opcodes, "teq", 9);
+  insertBack(opcodes, "cmp", 10);
+
+  insertBack(opcodes, "beq", 0);
+  insertBack(opcodes, "bne", 1);
+  insertBack(opcodes, "bge", 10);
+  insertBack(opcodes, "blt", 11);
+  insertBack(opcodes, "bgt", 12);
+  insertBack(opcodes, "ble", 13);
+  insertBack(opcodes, "bal", 14);
+  insertBack(opcodes, "b", 14);
+}
+
 int main(int argc, char** argv) {
-    initTable(&opcodes);
-
-    insertBack(&opcodes, "and", 0);
-    insertBack(&opcodes, "eor", 1);
-    insertBack(&opcodes, "sub", 2);
-    insertBack(&opcodes, "rsb", 3);
-    insertBack(&opcodes, "add", 4);
-    insertBack(&opcodes, "orr", 12);
-    insertBack(&opcodes, "mov", 13);
-    insertBack(&opcodes, "tst", 8);
-    insertBack(&opcodes, "teq", 9);
-    insertBack(&opcodes, "cmp", 10);
-
-    insertBack(&opcodes, "beq", 0);
-    insertBack(&opcodes, "bne", 1);
-    insertBack(&opcodes, "bge", 10);
-    insertBack(&opcodes, "blt", 11);
-    insertBack(&opcodes, "bgt", 12);
-    insertBack(&opcodes, "ble", 13);
-    insertBack(&opcodes, "bal", 14);
-    insertBack(&opcodes, "b", 14);
-
-    /*
-    for (tableIter iter = tableBegin(&opcodes); iter != tableEnd(&opcodes); iter = iter -> next) {
-        printf("%u\n", tableLookup(&opcodes, iter -> key));
-    }*/
-
-    /*char instruction[] = "mul r1, r12, r3";
-    int32_t ins = assembleMult(tokenize(instruction));
-    printf("%d", ins); */
-
+    // Records the number of data items written to the end of the assembled instruction file by ldr/str.
+    opcodes = malloc(sizeof(symbolTable));
+    init_opcodes(opcodes);
     symbolTable labelsAddresses;
     initTable(&labelsAddresses);
 
@@ -88,19 +86,17 @@ int main(int argc, char** argv) {
                 addressCounter += 4;
             }
 
+            free(tokens);
+
         }
         fclose(firstPass);
+
     }
     else
     {
         perror(""); /* why didn't the file open? */
     }
     int32_t endAddress = addressCounter;
-
-    /*
-    for (tableIter iter = tableBegin(&labelsAddresses); iter != tableEnd(&labelsAddresses); iter = iter -> next) {
-        printf("%s %u\n", iter -> key, tableLookup(&labelsAddresses, iter -> key));
-    }*/
 
     // The second pass over the source file, outputs the binary instructions.
     FILE *input = fopen(argv[1], "r");
@@ -129,6 +125,7 @@ int main(int argc, char** argv) {
             }
             fwrite(&instruction, sizeof(int32_t), 1, output);
             addressCounter += 4;
+            free(tokens);
         }
         fclose(input);
         fclose(output);
@@ -139,5 +136,6 @@ int main(int argc, char** argv) {
     }
 
     destroyTable(&labelsAddresses);
-    destroyTable(&opcodes);
+    destroyTable(opcodes);
+    free(opcodes);
 }
