@@ -1,8 +1,9 @@
-#include "symbolTable.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "symbolTable.h"
 
 // This file defines a symbol table ADT, based on the implementation of the doubly linked list from the C lectures.
 

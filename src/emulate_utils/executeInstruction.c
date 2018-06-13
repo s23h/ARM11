@@ -1,5 +1,9 @@
 #include <stdlib.h>
+#include <printf.h>
+
+#include "../utilities.h"
 #include "executeInstruction.h"
+#include "decodedInstruction.h"
 
 // Checks the cond code to determine whether the instruction should execute.
 uint8_t checkCondition(uint8_t cond, int32_t* registers) {

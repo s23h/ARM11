@@ -4,10 +4,8 @@
 #include <stdint.h>
 
 #include "utilities.h"
-#include "decodedInstruction.h"
-#include "executeInstruction.h"
-
-#define RAM_SIZE 65536
+#include "emulate_utils/decodedInstruction.h"
+#include "emulate_utils/executeInstruction.h"
 
 // Loads the provided file into main memory.
 void loadFile(uint8_t* memory, const char* fileName) {

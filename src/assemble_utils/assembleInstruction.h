@@ -3,6 +3,11 @@
 
 #include <stdint.h>
 
+static symbolTable opcodes;
+
+// Records the number of data items written to the end of the assembled instruction file by ldr/str.
+static int numDataWrites = 0;
+
 typedef enum { DATA_PROCESSING, MULTIPLY, DATA_TRANSFER, BRANCH, LABEL, SPECIAL } instructionType;
 
 int32_t assembleDP(char** tokens);

@@ -1,7 +1,10 @@
 #include "symbolTable.h"
 #include <stdlib.h>
 #include <string.h>
-#include "utilities.h"
+#include <stdio.h>
+
+#include "assembleInstruction.h"
+#include "../utilities.h"
 
 // Returns a 32-bit value representing the machine code instruction corresponding to the specified
 // Data Processing instruction, represented in token form

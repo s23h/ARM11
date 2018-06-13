@@ -3,16 +3,11 @@
 #include <string.h>
 
 #include "utilities.h"
-#include "symbolTable.h"
-#include "assembleInstruction.h"
+#include "assemble_utils/symbolTable.h"
+#include "assemble_utils/assembleInstruction.h"
 
 #define MAX_TOKENS 6
 #define MAXC 511
-
-static symbolTable opcodes;
-
-// Records the number of data items written to the end of the assembled instruction file by ldr/str.
-static int numDataWrites = 0;
 
 // Breaks down a line into its constituent tokens -- e.g. mov r1, r2 would be turned into an string array containing
 // mov, r1, r2 as its elements
