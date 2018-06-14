@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "symbolTable.h"
+#include "symbol_table.h"
 #include "../utilities.h"
-#include "assembleInstruction.h"
+#include "assemble_instruction.h"
 
 // Determines the instruction type from the list of tokens provided.
 instruction_type get_instruction_type(char **tokens) {

@@ -1,7 +1,7 @@
 #include <stdint.h>
 
 #include "../utilities.h"
-#include "decodedInstruction.h"
+#include "decoded_instruction.h"
 
 // Checks the bit pattern of the instruction to determine its type.
 instruction_type get_instruction_type(int32_t instruction) {

@@ -7,17 +7,17 @@ CFLAGS  = -Wall -g -D_POSIX_SOURCE -D_BSD_SOURCE -std=c99 -Werror -pedantic
 
 all: assemble emulate
 
-assemble: assemble.o utilities.o assemble_utils/symbolTable.o assemble_utils/assembleInstruction.o
+assemble: assemble.o utilities.o assemble_utils/symbol_table.o assemble_utils/assemble_instruction.o
 
-emulate: emulate.o emulate_utils/decoded_instruction.o emulate_utils/executeInstruction.o utilities.o
+emulate: emulate.o emulate_utils/decoded_instruction.o emulate_utils/execute_instruction.o utilities.o
 
 decoded_instruction.o: decoded_instruction.h utilities.h
 
-executeInstruction.o: executeInstruction.h utilities.h
+executeInstruction.o: execute_instruction.h utilities.h
 
-symbolTable.o: symbolTable.h
+symbolTable.o: symbol_table.h
 
-assembleInstruction.o: assembleInstruction.h
+assembleInstruction.o: assemble_instruction.h
 
 utilities.o: utilities.h
 

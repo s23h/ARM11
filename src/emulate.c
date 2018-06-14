@@ -4,8 +4,8 @@
 #include <stdint.h>
 
 #include "utilities.h"
-#include "emulate_utils/decodedInstruction.h"
-#include "emulate_utils/executeInstruction.h"
+#include "emulate_utils/decoded_instruction.h"
+#include "emulate_utils/execute_instruction.h"
 
 // Loads the provided file into main memory.
 void load_file(uint8_t *memory, const char *file_name) {

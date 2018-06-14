@@ -2,7 +2,7 @@
 #define EXECUTE_INSTRUCTION_H
 
 #include <stdint.h>
-#include "decodedInstruction.h"
+#include "decoded_instruction.h"
 
 #define RAM_SIZE 65536
 

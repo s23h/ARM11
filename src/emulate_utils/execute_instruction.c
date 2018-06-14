@@ -2,8 +2,8 @@
 #include <printf.h>
 
 #include "../utilities.h"
-#include "executeInstruction.h"
-#include "decodedInstruction.h"
+#include "execute_instruction.h"
+#include "decoded_instruction.h"
 
 // Checks the cond code to determine whether the instruction should execute.
 uint8_t check_condition(uint8_t cond, int32_t *registers) {
@@ -258,15 +258,15 @@ void execute_dt(decoded_instruction decoded, int32_t *registers, uint8_t *mainMe
     }
 
     // Calculates the address to read/load from
-    int32_t addressToEffect;
+    int32_t address_to_effect;
     if (decoded.p && decoded.u) {
-        addressToEffect = registers[decoded.rn] + offset;
+        address_to_effect = registers[decoded.rn] + offset;
     }
     else if (decoded.p && !decoded.u) {
-        addressToEffect = registers[decoded.rn] - offset;
+        address_to_effect = registers[decoded.rn] - offset;
     }
     else {
-        addressToEffect = registers[decoded.rn];
+        address_to_effect = registers[decoded.rn];
         if (decoded.u) {
             registers[decoded.rn] += offset;
         }
@@ -276,47 +276,47 @@ void execute_dt(decoded_instruction decoded, int32_t *registers, uint8_t *mainMe
     }
 
     if (decoded.l) {
-      switch (addressToEffect) {
+      switch (address_to_effect) {
         case 0x20200000:
         case 0x20200004:
         case 0x20200008:
         case 0x20200028:
-        case 0x2020001c: registers[decoded.rd] = addressToEffect; break;
+        case 0x2020001c: registers[decoded.rd] = address_to_effect; break;
         default: break;
       }
     }
 
 
-    if (addressToEffect == 0x20200000) {
+    if (address_to_effect == 0x20200000) {
       printf("One GPIO pin from 0 to 9 has been accessed\n");
       return;
     }
-    else if (addressToEffect == 0x20200004) {
+    else if (address_to_effect == 0x20200004) {
       printf("One GPIO pin from 10 to 19 has been accessed\n");
       return;
     }
-    else if (addressToEffect == 0x20200008) {
+    else if (address_to_effect == 0x20200008) {
       printf("One GPIO pin from 20 to 29 has been accessed\n");
       return;
     }
-    else if (addressToEffect == 0x20200028) {
+    else if (address_to_effect == 0x20200028) {
       printf("PIN OFF\n");
       return;
     }
-    else if (addressToEffect == 0x2020001c) {
+    else if (address_to_effect == 0x2020001c) {
       printf("PIN ON\n");
       return;
     }
-    else if (addressToEffect >= RAM_SIZE) {
-      printf("Error: Out of bounds memory access at address 0x%08x\n", addressToEffect);
+    else if (address_to_effect >= RAM_SIZE) {
+      printf("Error: Out of bounds memory access at address 0x%08x\n", address_to_effect);
       return;
     }
 
     // Read/load from memory
     if (decoded.l) {
-        registers[decoded.rd] = ((int32_t*)(&(mainMemory[addressToEffect])))[0];
+        registers[decoded.rd] = ((int32_t*)(&(mainMemory[address_to_effect])))[0];
     }
     else {
-        ((int32_t*)(&(mainMemory[addressToEffect])))[0] = registers[decoded.rd];
+        ((int32_t*)(&(mainMemory[address_to_effect])))[0] = registers[decoded.rd];
     }
 }

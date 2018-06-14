@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "symbolTable.h"
+#include "symbol_table.h"
 
 // This file defines a symbol table ADT, based on the implementation of the doubly linked list from the C lectures.
 

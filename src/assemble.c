@@ -3,8 +3,8 @@
 #include <string.h>
 
 #include "utilities.h"
-#include "assemble_utils/symbolTable.h"
-#include "assemble_utils/assembleInstruction.h"
+#include "assemble_utils/symbol_table.h"
+#include "assemble_utils/assemble_instruction.h"
 
 #define MAX_TOKENS 6
 #define MAXC 511
