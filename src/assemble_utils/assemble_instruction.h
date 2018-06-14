@@ -6,7 +6,6 @@
 #include <string.h>
 #include <stdint.h>
 
-static int num_data_writes = 0;
 extern symbol_table* opcodes;
 
 typedef enum { DATA_PROCESSING, MULTIPLY, DATA_TRANSFER, BRANCH, LABEL, SPECIAL } instruction_type;

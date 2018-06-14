@@ -5,6 +5,8 @@
 #include "../utilities.h"
 #include "assemble_instruction.h"
 
+static int num_data_writes = 0;
+
 // Determines the instruction type from the list of tokens provided.
 instruction_type get_instruction_type(char **tokens) {
     if ((strcmp(tokens[0], "add") == 0) || (strcmp(tokens[0], "sub") == 0) || (strcmp(tokens[0], "rsb") == 0)

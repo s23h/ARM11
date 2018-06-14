@@ -94,19 +94,23 @@ int main(int argc, char **argv) {
     }
 
     printf("Registers:\n");
-    for (int i = 0; i < 13; i++) {
-        printf("$%d\t:\t", i);
-        printf("%d\t(0x%08x)\n", registers[i], registers[i]);
+    for (int i = 0; i <= 9; i++) {
+        printf("$%d  :", i);
+        printf("%11d (0x%08x)\n", registers[i], registers[i]);
+    }
+    for (int i = 10; i <= 12; i++) {
+        printf("$%d :", i);
+        printf("%11d (0x%08x)\n", registers[i], registers[i]);
     }
 
-    printf("PC\t:\t%d\t(0x%08x)\n", registers[15], registers[15]);
-    printf("CPSR\t:\t%d\t(0x%08x)\n", registers[16], registers[16]);
+    printf("PC  :%11d (0x%08x)\n", registers[15], registers[15]);
+    printf("CPSR:%11d (0x%08x)\n", registers[16], registers[16]);
 
     printf("Non-zero memory:\n");
 
     for (int i = 0; i < RAM_SIZE; i += 4) {
         if (((int32_t*)(main_memory))[i / 4] != 0) {
-            printf("0x%08x : 0x%02x%02x%02x%02x\n", i, main_memory[i], main_memory[i + 1],
+            printf("0x%08x: 0x%02x%02x%02x%02x\n", i, main_memory[i], main_memory[i + 1],
             main_memory[i + 2], main_memory[i + 3]);
         }
     }
