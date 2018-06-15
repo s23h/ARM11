@@ -1,21 +1,81 @@
-\documentclass[11pt]{article}
+\documentclass[11pt,twoside]{article}
+\usepackage[utf8]{inputenc}
+%% Language and font encodings
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
 
-\usepackage{fullpage}
-
+%% Sets page size and margins
+\usepackage[a4paper,top=3cm,bottom=2cm,left=3.3cm,right=3.3cm,marginparwidth=1.75cm]{geometry}
 \begin{document}
-
-\title{Our Extension...}
-\author{TODO}
-
+\title{\bf \Huge ARM11 - Final Report}
+\author{Group 34\\ Prem Chowdhry, Salman Hussain, \\  Suphanat "Jeep" Sangwongwanich, Zimu Zeng}
+\date{June 2018}
 \maketitle
 
 \section{Introduction}
+This is a report detailing how we designed and created the emulator, assembler, extension and also the reflections of the group and each of the individuals. The report would also discuss about the challenges during whole duration of working the project that includes making the emulator and assembler, and also the extension. \\
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-culpa qui officia deserunt mollit anim id est laborum.
+\section{Group Management}
+All members of the group worked together to design the initial implementation of the emulator using a \texttt{struct} for the decoded instructions and other elements as detailed in Section 3. This initial design was proposed by Zimu and worked upon by the rest of the group to make it workable in C language.\\\\
+Firstly, Zimu designed and wrote the implementation of the Data Processing instruction by creating a function to decode and then execute the instruction. The rest of the group followed a similar procedure for the rest of the instructions. Salman wrote the Single Data Transfer instruction section, Prem the Multiply instruction and Jeep the Branch Condition part. To finish it off, the group worked as a whole to combine and write the main function to make the emulate file executable.\\\\
+We initially followed a very similar breakdown of work for the assembler too since it was effective for completing the emulator. However we quickly found it was more challenging and we were not utilising our individual strengths to their best, so our stronger coder Zimu spent comparatively more time on it whilst the others focused on Part III and IV. \\\\
+We coordinated our work using a text group chat which helped us organise when to meet in labs and other administrative procedures. Then we used our shared Git server to push and pull our changes merging them into our final file. We realised a bit later on that using individual branches that we would then merge made the process much easier. Finally, for the creation of our reports in LaTex, we used a shared Overleaf project to collaboratively work on the file where each person in the group could read and write to the file. \\
 
+\newpage
+\section{Structure of Emulator}
+The 64KB of main memory is represented as an array of \texttt{uint8\_t} (allocated in the heap) to allow for byte addressing, though it probably would have been better to use an array of \texttt{uint32\_t} instead and define functions for byte addressing, since instructions are extracted 32 bits at a time. The registers are represented as an array of \texttt{uint32\_t}.\\\\
+We also made use of several utility functions to simplify the code, such as the macro \texttt{CHECK\_BIT} to check the value of a particular bit, and \texttt{extract\_bits} to get the value of several bits simultaneously, and various \texttt{set\_bit} functions for setting the value of individual bits. Since we have also used these for the assembler, we have moved them to another file called utilities.c.\\\\
+We defined a \texttt{struct} called \texttt{decoded\_instruction} to represent the decoded version of the instructions, and a \texttt{get\_instruction\_type} function that checks the bit patterns of an instruction to determine its type (data processing, multiply, etc). We have written one decode function for each type(which returns a struct containing the components of the 32-bit instruction.)  The correct function is called by considering the result from \texttt{get\_instruction\_type}. These functions are held in within \texttt{decode\_instruction.c} which is within the folder \texttt{emulate\_utils} \\\\
+We initially considered having four separate \texttt{struct} types for each type of instruction, but eventually decided that having one \texttt{struct} type would make the code much easier to work with, though a minor cost is that the single \texttt{struct} type would have to contain every possible component of every single instruction type, leading to some memory wastage.\\\\
+We subsequently wrote four execute functions, one to handle each type of decoded instruction. The execute functions consider the components of the \texttt{decoded\_instruction struct} (which represent cond, opcode, etc) and performs the required operations. These functions are held in within \texttt{execute\_instruction.c} which is also within the folder \texttt{emulate\_utils}\\\\
+The three-stage pipeline is finally implemented as a while loop in the main function, which calls the decode and execute functions that we defined. \\
+
+\section{Structure of Assembler}
+As required, our assembler makes use of a symbol table ADT in order to map labels to addresses. We also used the symbol table to map operation mnemonics to opcodes in order to avoid too many if else statements. Our implementation of the ADT is based on the doubly linked list implementation found in the C lecture notes, with each node in the list being a key value pair.\\\\
+The advantage of this implementation is its simplicity, though a more efficient alternative would have been to implement a hash table, which can lookup in constant time and is therefore particularly effective when dealing with larger tables. However since our assembler mainly deals with reasonably small files with few labels, this is perhaps not so much of a concern.\\\\
+Our assembler assembles the file using the two pass approach. The first pass uses an address counter that increments by 4 every time a new assembly instruction is read, in order to determine the address of each label. This address counter in turn gives us the end address of the assembly program, which allows our assembler to write data to the right location in the output for the LDR constant value case.\\\\
+On the second pass, where the instructions are actually compiled, our assembler reads lines from the assembly code file and assembles and outputs them on a line by line basis. We initially considered reading all the lines into an array of strings, but eventually decided that this approach would be too memory intensive.\\\\
+Based on the operation mnemonic, the operation type (represented by the enumerated type \texttt{instruction\_type}) of each line of assembly instruction is determined and corresponding sent to the correct assembly function (there is one function for each of the 5 types, including Special instructions). These functions are held in within \texttt{assemble\_instruction.c} which is within the folder \texttt{assemble\_utils}. Labels are automatically skipped over. An address counter is used to keep track of the address of the current instruction being processed which is particularly helpful when calculating offsets in the assembler functions.\\\\
+The assembler functions themselves generate 32-bit machine code instructions by first using the line of assembly code (in tokenized form) to calculate the required components of the machine code (such as Rd, Rn, etc.). The actual 32-bit code is generated through a combination of left shifts, masks and bitwise OR operations. For example, in order to set bits 12 to 15 on a 32-bit number to the Rd value of 8, we took the Rd value of 8, created a mask by shifting Rd to the left by 12, and combined the mask with the 32-bit number through bitwise OR. The other components of the instruction, such as operand2, are also set in a similar way. \\
+
+\section{Extension}
+\subsection{Extension Design}
+Initially, the group planned to develop an extension centered around controlling a Raspberry Pi self-driving car, since certain members of the group had developed something similar in Python in the past. However, we found this would be too difficult to implement given the time constraints and the fact that these projects required the use of very large and complex external computer vision sound detection libraries, so we decided not to proceed with this idea.\\\\
+The group then planned design and implement a 3 bit LED counter as the extension but found this to be too simplistic for an extension. Eventually we decided on making a 7 segment display that will display random numbers from 0-9.\\
+\subsection{Implementation}
+The way we decided to tackle this program was to write a C program which would be written locally on our computers, before then loaded onto the Raspberry Pi to compile and run. Since we had difficulties with writing the assembly code as expanded on in Section 5.2, we felt this was the best approach. The most difficult part was be the initial set up of the GPIO pins, since the rest of it was simply mapping each number from 0-9 to a sequence of LEDs and a while loop.\\\\
+First, we set up an \texttt{int*} array for each number where the index corresponds to the wiring pin number, and in each place a 1 or 0 would indicate whether the LED would be set to on or off. Following this, we had various methods defined for each possible function of the LEDs; a initialization method to set up the pins, a function that would set the LEDs on by being passed an array as an argument, turning on the LEDs when needed. We had to be careful as the accepted designation of LEDs for hardware manufacturers is that LOW corresponds to the LED being off and vice versa. Finally, in our main loop we had a random number generated that would display on the LEDs, with a delay timer was set to display it for a few seconds before generating a new one. The last step was to cut out a plastic overlay for the seven segment display and wire the LEDs to the Pi to put it onto.\\
+
+Prior to this, we realised that since our assembler doesn't support shifted registers, which is why we opted to instead write the extension in C using the \texttt{wiringPi} module to help us map the GPIO pins. If we had more time we would definitely have implemented it in the way we originally planned to, where our C code would take inputs from the user and then write the corresponding Assembly code to a text document, that our assembly could compile and boot onto our Raspberry Pi.\\
+
+
+\section{Challenges}
+ As ever, due to time constraints, we had to decide between 1) a more efficient assembler with more features and 2) a better extensions. Implementing the more difficult one-pass assembler and supporting shifted registers for Single Data Transfer would have inevitably taken us more time so as a group we decided to prioritize the extension. \\\\
+ One of the challenges we faced in the assembler occurred when attempting to restructure the code so it was more readable and easier to debug as originally everything was in one file, with numerous static variables. However, while restructuring the code across multiple files, we realised the static variables needed to be accessed by methods in different files. To initially overcome this, we had to pass a pointer to the symbol table (which remained constant throughout once initialised) to all the functions. Instead we felt it was best to have it as a global variable and declare it in the header files using. \texttt{extern} in the other files that required the variable. \\\\
+ Another challenge that we faced was figuring out how to set multiple bits of a 32bit number at the same time, in order to turn the assembly instruction into a 32bit number with the correct opcode, s bit, and so on. Fortunately, we remembered from the C lecture notes that we can use a mask with bitwise operations for this.\\\\
+ Although coming up with an extension was quite a challenge, we managed to decide on one and work on it promptly.
+\section{Testing}
+Initially we had some trouble using the provided testsuite so ended up manually comparing the expected outputs in the given test cases to our output. However, we soon figured out how to use it and so testing became much easier for the assembler. For individual function testing, we make unit tests, rather each member of the group tested their own code, which was then further verified by at least one other member. We also used Valgrind to check for memory leaks, and fixed all fatal errors produced. Additionally we used GDB to debug our C programs. In order to test part III and IV, it was simply a visual test to see whether the light was blinking and whether random numbers were correctly being displayed.
+
+\section{Group Reflections}
+For the emulator, we attempted to split the work between the 4 members, with one member implementing the code for decoding and executing each of the 4 different types of instructions. However, we soon realised that this was not necessarily the most efficient way to split the work, as a lot of time had to be wasted ensuring that all our codes were compatible with each other.\\\\
+We decided that it would be more efficient to have each member focusing on a specific part. Not only did this ensure that minimal time would be spent ensuring compatibility, it also ensured that each member’s talents would be used as efficiently as possible, with the strongest C programmers working on the emulator and the assembler, while the team members with Raspberry Pi experience in turn focused on part 3 as well as the extension which also requires the Raspberry Pi.\\\\
+Something we could have improved on was to set more deadlines within the group. Ideally we should have started the task as early as possible, and set deadlines at regularly intervals in order to ensure that progress is made steadily and consistently. This would have greatly increased efficiency, as having long programming sessions causes fatigue, boredom, leading to tasks taking longer than necessary to complete, as well as more careless errors. Setting regular deadlines would have encouraged our team to put in a few hours once every few days on a regular basis, resulting in higher quality and more efficient work.\\
+
+
+\section{Individual Reflections}
+\subsection{Individual Reflection - Zimu}
+Prior to coming to university I already had some experience with C++ from studying GCSE Computer Science. On the other hand, I was very inexperienced with the Raspberry Pi, and electronics in general. Therefore, our group felt that the optimal way to split the work would be to have me focus on working on the emulator and assembler, while other members of the group, who were more experience with electronics due to having done robotics projects in the past, would focus on part 3 and the extension.\\\\
+This was an especially good arrangement considering that I study the JMC course, and therefore had to complete a coursework task on ARM assembly at the same time as doing this project, making me especially ready to tackle the challenge of implementing the assembler.\\\\
+However, if I were to partake in another group assignment in the future, I would try to be more proactive in asking my fellow teammates to review my code to ensure code quality, so this is something I will try to improve on in the future.
+\subsection{Individual Reflection - Jeep}
+As I have never studied C before this course. I struggled to understand the concept of the programming language and therefore I was following behind everyone else in the group. However, I tried my best to be a support in the group such as making sure that everyone in the group submits the WebPA on time or also organized the time everyone should meet together.\\\\
+As we are working on the project, I manage to understand more about the extension as I have some experience in Raspberry Pi and Python since I participated in some summer courses involving robotics before. I believe I managed to get along with my teammates well and I worked well with each member and on my assigned sections of the task.
+\subsection{Individual Reflection - Salman}
+C was a new language to me, but having studied Architecture earlier in the year, and doing a lot of reading around it, I felt I had a good understanding of the language despite lack of experience and practice. In particular, I felt confident in using assembly language so I tried to contribute to all 4 parts of the tasks. As a group I feel we work well together without dispute and all try and help one another wherever possible.  \\\\
+In terms of things to improve on for next time, as a group, we should have better utilised the features of Git. Although we did use branches, there were many code inconsistencies and we ended spending time at the end fixing these and debugging errors. This also included restructuring the entire code so it was readable and well split across multiple files. This could've been avoided if we had discussed and agreed upon an overall file and code structure at the start of the project, as opposed to just a conceptual structure on how were going to solve the problem.
+\subsection{Individual Reflection - Prem}
+I was also a student who was new to the language C, having not used it prior to this project. However, I found from learning Java earlier on in the term, and the concepts from other modules throughout the year gave me a good base of knowledge to utilise it. While I was able to contribute to the earlier sections, my main strength and thus focus in the project was with the Raspberry Pi. I was already experienced with using a Raspberry Pi and the GPIO pins from earlier physical implemented projects which I coded in Python.\\\\
+I felt overall the team worked well as a unit, but we had occasional problems involving the integration of our contributions since we all added commits to the project. This is particular held true for the Parts I and II, where as a result of not being as strong in C, we had a lot of misunderstandings. I believe next time we could improve upon planning and designating on tasks before undertaking them to avoid conflict later down the line.
 \end{document}
